@@ -7,12 +7,12 @@ import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 
-//@MicronautTest
+@MicronautTest
 class ApplicationTest {
-//	@Inject
+	@Inject
 	EmbeddedApplication<?> application;
 
-//	@Test
+	@Test
 	void testItWorks() {
 		Assertions.assertTrue(application.isRunning());
 	}

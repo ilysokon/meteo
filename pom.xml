@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.meteo</groupId>
     <artifactId>meteo</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <!--<parent>
+    <parent>
         <groupId>io.micronaut.platform</groupId>
         <artifactId>micronaut-parent</artifactId>
-        <version>4.2.1</version>
-    </parent>-->
-
+        <version>4.2.2</version>
+    </parent>
     <properties>
         <packaging>jar</packaging>
-        <jdk.version>21</jdk.version>
-        <release.version>21</release.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>17</jdk.version>
+        <release.version>17</release.version>
         <micronaut.version>4.2.2</micronaut.version>
-        <micronaut.core.version>4.2.2</micronaut.core.version>
-        <micronaut.serialization.version>4.2.2</micronaut.serialization.version>
         <micronaut.runtime>netty</micronaut.runtime>
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
-        <micronaut.aot.packageName>com.meteo.aot.generated</micronaut.aot.packageName>
-        <exec.mainClass>com.meteo.Application</exec.mainClass>
-
+        <micronaut.aot.packageName>com.example.aot.generated</micronaut.aot.packageName>
+        <exec.mainClass>com.example.Application</exec.mainClass>
     </properties>
 
+    <modules>
+        <module>geometeo</module>
+        <module>netatmo</module>
+        <module>cassandra</module>
+    </modules>
     <repositories>
         <repository>
             <id>central</id>
@@ -39,131 +35,109 @@
         </repository>
     </repositories>
 
-    <modules>
-        <module>geometeo</module>
-        <module>netatmo</module>
-        <module>cassandra</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-server-netty</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.serde</groupId>
+            <artifactId>micronaut-serde-jackson</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.validation</groupId>
+            <artifactId>micronaut-validation</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <configuration>
+                    <configFile>aot-${packaging}.properties</configFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Uncomment to enable incremental compilation -->
+                    <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-parent</artifactId>
-                <version>4.0.0-M1</version>
-                <!--<version>4.2.1</version>-->
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+                    <annotationProcessorPaths combine.children="append">
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-http-validation</artifactId>
+                            <version>${micronaut.core.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut.serde</groupId>
+                            <artifactId>micronaut-serde-processor</artifactId>
+                            <version>${micronaut.serialization.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>io.micronaut</groupId>
+                                    <artifactId>micronaut-inject</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut.validation</groupId>
+                            <artifactId>micronaut-validation-processor</artifactId>
+                            <version>${micronaut.validation.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>io.micronaut</groupId>
+                                    <artifactId>micronaut-inject</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Amicronaut.processing.group=com.meteo</arg>
+                        <arg>-Amicronaut.processing.module=geometeo</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-        <dependencies>
-            <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-inject-java -->
-            <dependency>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-inject-java</artifactId>
-                <version>4.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut.test</groupId>
-                <artifactId>micronaut-test-spock</artifactId>
-                <version>4.1.1</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-http-server-netty -->
-            <dependency>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-http-server-netty</artifactId>
-                <version>4.2.2</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut.serde</groupId>
-                <artifactId>micronaut-serde-jackson</artifactId>
-                <version>2.4.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut.cassandra</groupId>
-                <artifactId>micronaut-cassandra</artifactId>
-                <version>6.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.4.14</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut</groupId>
-                <artifactId>micronaut-http-client</artifactId>
-                <version>4.2.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut.test</groupId>
-                <artifactId>micronaut-test-junit5</artifactId>
-                <version>4.1.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>5.10.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.10.1</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>io.micronaut.maven</groupId>
-                    <artifactId>micronaut-maven-plugin</artifactId>
-                    <configuration>
-                        <configFile>aot-${packaging}.properties</configFile>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <!-- Uncomment to enable incremental compilation -->
-                        <!-- <useIncrementalCompilation>false</useIncrementalCompilation> -->
-
-                        <annotationProcessorPaths combine.children="append">
-                            <path>
-                                <groupId>io.micronaut</groupId>
-                                <artifactId>micronaut-http-validation</artifactId>
-                                <version>${micronaut.core.version}</version>
-                            </path>
-                            <path>
-                                <groupId>io.micronaut.serde</groupId>
-                                <artifactId>micronaut-serde-processor</artifactId>
-                                <version>2.4.0</version>
-                                <exclusions>
-                                    <exclusion>
-                                        <groupId>io.micronaut</groupId>
-                                        <artifactId>micronaut-inject</artifactId>
-                                    </exclusion>
-                                </exclusions>
-                            </path>
-                        </annotationProcessorPaths>
-                        <compilerArgs>
-                            <arg>-Amicronaut.processing.group=com.meteo</arg>
-                            <arg>-Amicronaut.processing.module=netatmo</arg>
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
 </project>
