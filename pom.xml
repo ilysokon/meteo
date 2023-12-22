@@ -27,7 +27,9 @@
         <module>geometeo</module>
         <module>netatmo</module>
         <module>cassandra</module>
+        <module>core</module>
     </modules>
+
     <repositories>
         <repository>
             <id>central</id>
@@ -133,7 +135,7 @@
                     </annotationProcessorPaths>
                     <compilerArgs>
                         <arg>-Amicronaut.processing.group=com.meteo</arg>
-                        <arg>-Amicronaut.processing.module=geometeo</arg>
+                        <arg>-Amicronaut.processing.module=meteo</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

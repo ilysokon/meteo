@@ -1,4 +1,4 @@
-package com.meteo;
+package com.meteo.geometeo;
 
 import io.micronaut.runtime.Micronaut;
 import jakarta.inject.Singleton;

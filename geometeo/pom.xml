@@ -22,7 +22,7 @@
             <micronaut.runtime>netty</micronaut.runtime>
             <micronaut.aot.enabled>false</micronaut.aot.enabled>
             <micronaut.aot.packageName>com.meteo.aot.generated</micronaut.aot.packageName>
-            <exec.mainClass>com.meteo.Application</exec.mainClass>
+            <exec.mainClass>com.meteo.geometeo.Application</exec.mainClass>
         </properties>
 
         <repositories>
@@ -33,6 +33,10 @@
         </repositories>
 
         <dependencies>
-
+            <dependency>
+                <groupId>com.meteo</groupId>
+                <artifactId>core</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
         </dependencies>
 </project>
