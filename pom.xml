@@ -83,6 +83,18 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--<dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-sdk-java</artifactId>
+            <version>2.X.X</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.12.694</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -134,8 +146,8 @@
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
-                        <arg>-Amicronaut.processing.group=com.meteo</arg>
-                        <arg>-Amicronaut.processing.module=meteo</arg>
+                        <arg>-Amicronaut.processing.group=com.meteo.geometeo</arg>
+                        <arg>-Amicronaut.processing.module=geometeo</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
