@@ -25,8 +25,8 @@ aws_secret_access_key = your-secret-access-key
 
 to create access key:
 https://us-east-1.console.aws.amazon.com/iam/home#/security_credentials
-ws_access_key_id: AKIA47CRYWTM3WVTKMH3
-aws_secret_access_key: MgVNs5mJtrcbW4U3LbRZhH9t+gfJkHJLVT40K1Km
+ws_access_key_id: your-access-key-id
+aws_secret_access_key: your-access-key-id
 
 Unable to connect to AWS:
 The security token included in the request is invalid. (Service: Sts, Status Code: 403, Request ID: e0fb725a-5157-48b2-912e-a3eeef08af9d)
