@@ -19,7 +19,8 @@ I hope this email finds you well!
 
 Since assisting you is my highest priority, I've tried to reach you on the phone number that we have associated to your AWS account in order to provide you with personal assistance and clarify your doubts, but unfortunately, I couldn't establish a connection with you as the call was routed to a voice mail box. However, I will be assisting over this email.
 
-From the case notes, I understand that your use case is to create an EKS cluster with a EC2 t2.micro instance which is covered under the Free Tier promotion as per suggestion by Amazon Q, however you are unable to see the option to choose EC2 t2.micro instance as a worker nodes. I'm really sorry for any inconvenience this might have caused you and I'll do my best to help you with this.
+From the case notes, I understand that your use case is to create an EKS cluster with a EC2 t2.micro instance which is covered under the Free Tier promotion as per suggestion by Amazon Q, however you are unable to see the option to choose EC2 t2.micro instance as a worker nodes. 
+I'm really sorry for any inconvenience this might have caused you and I'll do my best to help you with this.
 
 I have carefully reviewed your inquiry and it is a bit outside our scope. Here in basic support, we handle Billing and Account inquiries and our area of expertise does not involve direct technical support, as we are not AWS-certified engineers like our colleagues from Premium Support.
 

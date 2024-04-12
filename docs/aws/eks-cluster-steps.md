@@ -50,7 +50,8 @@ I will be assisting over this email.
 From the case notes, I understand that your use case is to create an EKS cluster with a EC2 t2.micro instance which is covered under the Free Tier promotion as per suggestion by Amazon Q, however you are unable to see the option to choose EC2 t2.micro instance as a worker nodes. 
 I'm really sorry for any inconvenience this might have caused you and I'll do my best to help you with this.
 
-I have carefully reviewed your inquiry and it is a bit outside our scope. Here in basic support, we handle Billing and Account inquiries and our area of expertise does not involve direct technical support, as we are not AWS-certified engineers like our colleagues from Premium Support.
+I have carefully reviewed your inquiry and it is a bit outside our scope. 
+Here in basic support, we handle Billing and Account inquiries and our area of expertise does not involve direct technical support, as we are not AWS-certified engineers like our colleagues from Premium Support.
 
 The level of knowledge we have on the platform is towards the billing dashboard, however even though I am not on the technical side I want to make sure you still get the help you need, so I've thoroughly reviewed the AWS Documentations, I have found a relevant to the query which I believe you will find useful and I will include them below:
 
