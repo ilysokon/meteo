@@ -6,6 +6,7 @@ kubectl config use-context meteo
 
 directly on explorer-4:
 kubectl create namespace meteo
+
 kubectl get namespace
 NAME              STATUS   AGE
 default           Active   30d
@@ -18,7 +19,4 @@ meteo             Active   37s
 
 scp explorer@explorer-4:/etc/kubernetes/admin.conf ./docs/kubernetes/admin.conf
 
-kubectl apply -f deployment.yaml -n meteo
-deployment.apps/meteo-deployment created
-
-kubectl describe pod meteo-deployment-74f98bcb79-4ct7z -n meteo
+add content of admin.conf to ~/./kube/config
