@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: meteo
-          image: meteo:latest
+          image: ilysokon/meteo:latest
           ports:
             - containerPort: 8080
