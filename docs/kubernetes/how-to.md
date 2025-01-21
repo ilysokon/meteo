@@ -1,0 +1,1 @@
+https://dev.to/kitarp29/deploy-your-first-java-application-on-k8s-14ke
