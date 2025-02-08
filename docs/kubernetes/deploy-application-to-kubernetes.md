@@ -6,6 +6,11 @@ https://dev.to/kitarp29/deploy-your-first-java-application-on-k8s-14ke
 
 Run this command in the same directory:
 docker build -t meteo .
+    ERROR: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Head "http://%2Fvar%2Frun%2Fdocker.sock/_ping": dial unix /var/run/docker.sock: connect: permission denied
+    
+    To Fix:
+    explorer@explorer-4:~/git/meteo$ sudo chmod 666 /var/run/docker.sock
+
 
 Your Docker Image is built and saved on your local. Verify by running this command:
 
@@ -26,6 +31,9 @@ docker push ilysokon/meteo:latest
 
 kubectl apply -f deployment.yaml -n meteo
 deployment.apps/meteo-deployment configured
+
+# to observe the deployment
+kubectl rollout status deployment.apps/meteo-deployment -n meteo
 
 kubectl describe deployment.apps/meteo-deployment -n meteo
 
