@@ -1,0 +1,15 @@
+GET https://api.netatmo.com/api/getstationsdata?device_id=70:ee:50:84:33:6a&get_favorites=false
+
+HTTP/2 200 OK
+date: Thu, 27 Feb 2025 21:19:28 GMT
+content-type: application/json; charset=utf-8
+cache-control: no-cache, must-revalidate
+expires: 0
+x-xss-protection: 1; mode=block
+access-control-allow-origin: *
+strict-transport-security: max-age=31536000; includeSubDomains
+x-powered-by: Netatmo
+x-azure-ref: 20250227T211928Z-r1ccc6c4445pq8z2hC1MUCws8n00000002t00000000030c3
+x-cache: CONFIG_NOCACHE
+x-http2-stream-id: 3
+transfer-encoding: chunked

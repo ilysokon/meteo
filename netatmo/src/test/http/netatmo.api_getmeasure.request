@@ -1,0 +1,15 @@
+GET https://api.netatmo.com/api/getmeasure?device_id=70:ee:50:84:33:6a&scale=1day&type=noise&optimize=false&real_time=false
+
+HTTP/2 200 OK
+date: Thu, 27 Feb 2025 21:10:59 GMT
+content-type: application/json; charset=utf-8
+cache-control: no-cache, must-revalidate
+expires: 0
+x-xss-protection: 1; mode=block
+access-control-allow-origin: *
+strict-transport-security: max-age=31536000; includeSubDomains
+x-powered-by: Netatmo
+x-azure-ref: 20250227T211057Z-r1ccc6c44456454jhC1MUCnngw00000002e0000000005uf4
+x-cache: CONFIG_NOCACHE
+x-http2-stream-id: 3
+transfer-encoding: chunked
