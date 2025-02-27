@@ -2,7 +2,7 @@ geometeo-4
    host: explorer-4
     port: TCP: 6447 to 6443 // kubernetes
     port: TCP: 27 to 22     // ssh
-        ssh: explorer@geometeo.ddns.net port: 27
+        ssh explorer@geometeo.ddns.net -p 27
 geometeo-6
     host: explorer-6
     port: TCP: 6448 to 6443 // kubernetes
