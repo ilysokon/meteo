@@ -1,0 +1,5 @@
+https://my.noip.com/dynamic-dns
+ilysokon: j...2
+// https://www.noip.com/support/knowledgebase/what-is-dynamic-dns/
+
+hostname: geometeo.ddns.net

@@ -34,9 +34,9 @@ grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecre
 POST https://api.netatmo.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 
-grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecret}}&code=1234567&redirect_uri={{redirectUri}}&scope={{scope}}
+grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecret}}&code=1234567&redirect_uri={{redirectUri}}&scope=read_station
 
-### Access Token was generated manually on https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff#form
+### Access Token and Refresh Token was generated manually on https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff#form
 
 ### Refresh Token - working
 
@@ -44,6 +44,11 @@ POST https://api.netatmo.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 
 grant_type=refresh_token&refresh_token={{refreshToken}}&client_id={{clientId}}&client_secret={{clientSecret}}
+
+### Get All Devices:
+GET {{netatmoApi-protocolHostAndPort}}/api/homesdata HTTP/1.1
+accept: application/json
+Authorization: Bearer {{accessToken}}
 
 ### /getmeasure - Smart Home Wether Station: [Temperature, Humidity, CO2, Pressure, Noise]
 

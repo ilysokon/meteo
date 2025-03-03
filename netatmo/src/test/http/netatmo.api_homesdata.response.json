@@ -1,0 +1,101 @@
+{
+  "body": {
+    "homes": [
+      {
+        "id": "61f261fc279d4b70f342a7eb",
+        "name": "Мой дом",
+        "altitude": 520,
+        "coordinates": [
+          11.630302,
+          48.171835
+        ],
+        "country": "DE",
+        "timezone": "Europe\/Berlin",
+        "rooms": [
+          {
+            "id": "2336037282",
+            "name": "Спальня",
+            "type": "livingroom",
+            "module_ids": [
+              "03:00:00:07:c3:ee"
+            ]
+          },
+          {
+            "id": "3628667496",
+            "name": "Babyroom",
+            "type": "custom",
+            "module_ids": [
+              "03:00:00:07:11:9c"
+            ]
+          },
+          {
+            "id": "3645447714",
+            "name": "Living room",
+            "type": "livingroom",
+            "module_ids": [
+              "70:ee:50:84:33:6a"
+            ]
+          },
+          {
+            "id": "2591492062",
+            "name": "Outdoor",
+            "type": "outdoor",
+            "module_ids": [
+              "02:00:00:84:50:66"
+            ]
+          }
+        ],
+        "modules": [
+          {
+            "id": "70:ee:50:84:33:6a",
+            "type": "NAMain",
+            "setup_date": 1643274748,
+            "room_id": "3645447714",
+            "modules_bridged": [
+              "02:00:00:84:50:66",
+              "03:00:00:07:c3:ee",
+              "03:00:00:07:11:9c"
+            ]
+          },
+          {
+            "id": "02:00:00:84:50:66",
+            "type": "NAModule1",
+            "name": "Outdoor",
+            "setup_date": 1643274749,
+            "room_id": "2591492062",
+            "bridge": "70:ee:50:84:33:6a"
+          },
+          {
+            "id": "03:00:00:07:c3:ee",
+            "type": "NAModule4",
+            "name": "Living room",
+            "setup_date": 1645207137,
+            "room_id": "2336037282",
+            "bridge": "70:ee:50:84:33:6a"
+          },
+          {
+            "id": "03:00:00:07:11:9c",
+            "type": "NAModule4",
+            "name": "Babyroom",
+            "setup_date": 1645207491,
+            "room_id": "3628667496",
+            "bridge": "70:ee:50:84:33:6a"
+          }
+        ]
+      }
+    ],
+    "user": {
+      "email": "igor.lysokon@gmail.com",
+      "language": "en",
+      "locale": "en-US",
+      "feel_like_algorithm": 0,
+      "unit_pressure": 2,
+      "unit_system": 0,
+      "unit_wind": 0,
+      "id": "61ec5c9e06cc231aa74e2978"
+    }
+  },
+  "status": "ok",
+  "time_exec": 0.03415489196777344,
+  "time_server": 1740690553
+}

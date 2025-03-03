@@ -1,0 +1,154 @@
+{
+  "body": {
+    "devices": [
+      {
+        "_id": "70:ee:50:84:33:6a",
+        "date_setup": 1643274748,
+        "last_setup": 1643274748,
+        "type": "NAMain",
+        "last_status_store": 1740690809,
+        "firmware": 204,
+        "wifi_status": 57,
+        "reachable": true,
+        "co2_calibrating": false,
+        "data_type": [
+          "Temperature",
+          "CO2",
+          "Humidity",
+          "Noise",
+          "Pressure"
+        ],
+        "place": {
+          "altitude": 520,
+          "city": "Munich",
+          "country": "DE",
+          "timezone": "Europe\/Berlin",
+          "location": [
+            11.630302,
+            48.171835
+          ]
+        },
+        "station_name": "Мой дом (Indoor)",
+        "home_id": "61f261fc279d4b70f342a7eb",
+        "home_name": "Мой дом",
+        "dashboard_data": {
+          "time_utc": 1740690807,
+          "Temperature": 19.8,
+          "CO2": 3145,
+          "Humidity": 65,
+          "Noise": 32,
+          "Pressure": 1017.9,
+          "AbsolutePressure": 956.7,
+          "min_temp": 19.5,
+          "max_temp": 20.7,
+          "date_max_temp": 1740654738,
+          "date_min_temp": 1740629891,
+          "temp_trend": "down",
+          "pressure_trend": "up"
+        },
+        "modules": [
+          {
+            "_id": "02:00:00:84:50:66",
+            "type": "NAModule1",
+            "module_name": "Outdoor",
+            "last_setup": 1643274749,
+            "data_type": [
+              "Temperature",
+              "Humidity"
+            ],
+            "battery_percent": 80,
+            "reachable": true,
+            "firmware": 53,
+            "last_message": 1740690806,
+            "last_seen": 1740690780,
+            "rf_status": 70,
+            "battery_vp": 5638,
+            "dashboard_data": {
+              "time_utc": 1740690780,
+              "Temperature": 4.7,
+              "Humidity": 76,
+              "min_temp": 4.4,
+              "max_temp": 7.5,
+              "date_max_temp": 1740651660,
+              "date_min_temp": 1740636843,
+              "temp_trend": "stable"
+            }
+          },
+          {
+            "_id": "03:00:00:07:c3:ee",
+            "type": "NAModule4",
+            "module_name": "Living room",
+            "last_setup": 1645207137,
+            "data_type": [
+              "Temperature",
+              "CO2",
+              "Humidity"
+            ],
+            "battery_percent": 94,
+            "reachable": true,
+            "firmware": 53,
+            "last_message": 1740690806,
+            "last_seen": 1740690761,
+            "rf_status": 73,
+            "battery_vp": 5886,
+            "dashboard_data": {
+              "time_utc": 1740690761,
+              "Temperature": 19.8,
+              "CO2": 3728,
+              "Humidity": 66,
+              "min_temp": 18.7,
+              "max_temp": 19.8,
+              "date_max_temp": 1740689889,
+              "date_min_temp": 1740611085,
+              "temp_trend": "up"
+            }
+          },
+          {
+            "_id": "03:00:00:07:11:9c",
+            "type": "NAModule4",
+            "module_name": "Babyroom",
+            "last_setup": 1645207491,
+            "data_type": [
+              "Temperature",
+              "CO2",
+              "Humidity"
+            ],
+            "battery_percent": 95,
+            "reachable": true,
+            "firmware": 53,
+            "last_message": 1740690806,
+            "last_seen": 1740690767,
+            "rf_status": 75,
+            "battery_vp": 5902,
+            "dashboard_data": {
+              "time_utc": 1740690767,
+              "Temperature": 20.4,
+              "CO2": 4048,
+              "Humidity": 67,
+              "min_temp": 20.4,
+              "max_temp": 21.3,
+              "date_max_temp": 1740611091,
+              "date_min_temp": 1740672310,
+              "temp_trend": "stable"
+            }
+          }
+        ]
+      }
+    ],
+    "user": {
+      "mail": "igor.lysokon@gmail.com",
+      "administrative": {
+        "lang": "en",
+        "reg_locale": "en-US",
+        "country": "DE",
+        "unit": 0,
+        "windunit": 0,
+        "pressureunit": 2,
+        "feel_like_algo": 0
+      }
+    }
+  },
+  "status": "ok",
+  "time_exec": 0.04813408851623535,
+  "time_server": 1740691168
+}
