@@ -5,13 +5,15 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  dependency-graph: write
+
 
 jobs:
   snapshot:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
       - name: Checkout code
