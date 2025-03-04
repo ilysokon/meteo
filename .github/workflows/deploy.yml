@@ -9,6 +9,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
