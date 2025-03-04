@@ -35,6 +35,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+    - name: Generate dependency snapshot
+      run: |
+        mvn dependency:tree -DoutputType=json -DoutputFile=dependencies.json
+
     - name: Submit dependency snapshot
       run: |
         curl -X POST \
