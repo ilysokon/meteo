@@ -35,6 +35,22 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/meteo:latest
 
+    - name: Generate dependency snapshot
+      run: mvn dependency:tree -DoutputType=json -DoutputFile=dependencies.json
+
+    - name: Submit dependency snapshot
+      run: |
+        if [ -f dependencies.json ]; then
+          curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d @dependencies.json \
+          https://api.github.com/repos/${{ github.repository }}/dependency-graph/snapshots
+        else
+          echo "dependencies.json file not found."
+          exit 1
+        fi
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
