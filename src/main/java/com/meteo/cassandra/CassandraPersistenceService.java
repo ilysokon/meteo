@@ -17,7 +17,7 @@ public class CassandraPersistenceService implements PersistenceService {
 	}
 
 	@Override
-	public void store(Geometeo geometeo) {
+	public void store(final Geometeo geometeo) {
 		LOG.info("Geometeo: " + geometeo + " is persisted in Cassandra");
 	}
 }

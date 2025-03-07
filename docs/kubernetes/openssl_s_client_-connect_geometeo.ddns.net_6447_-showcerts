@@ -1,0 +1,91 @@
+Connecting to 80.135.165.156
+CONNECTED(00000005)
+depth=0 CN=kube-apiserver
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 CN=kube-apiserver
+verify error:num=21:unable to verify the first certificate
+verify return:1
+depth=0 CN=kube-apiserver
+verify return:1
+---
+Certificate chain
+ 0 s:CN=kube-apiserver
+   i:CN=kubernetes
+   a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA256
+   v:NotBefore: Dec 21 23:20:10 2024 GMT; NotAfter: Dec 21 23:25:10 2025 GMT
+-----BEGIN CERTIFICATE-----
+MIIDiTCCAnGgAwIBAgIIEAcYllgMcN0wDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+AxMKa3ViZXJuZXRlczAeFw0yNDEyMjEyMzIwMTBaFw0yNTEyMjEyMzI1MTBaMBkx
+FzAVBgNVBAMTDmt1YmUtYXBpc2VydmVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEAscSuBcPMqn3wCQ73VCEt4oIkm2ZG7fRi75XdY/tHlc84Fve0ydm/
+26cmyYf6euwlVPIvWc5feJAtSFeSS3VNF6Q6h+8bJL1VURI+snNyDPnMCBPOLjeF
+HW5N3gpAKgQlISkRtRusCcOoV/CHcU9gx1WwD+i7MHLO9c8eqjpRHNAoSGe25uwI
+uUrzXKa3syd0M0tyYtsoeFnZFaMThrO4ns5rWC1lJSO5zpzJkH3PJlkqH8v8qjFO
+9dKW4FjVV3W9L2xaMFu06bsT7RZ2Qn+CTT8bbHmVPzep6lcfFuGniR2cYB3WTBVS
+z2q8EDEfE1ps3S3jIhHsCQNywuLKfrk3mwIDAQABo4HYMIHVMA4GA1UdDwEB/wQE
+AwIFoDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQY
+MBaAFAyWpXthcduKp1HA85j38jGCgtaGMH8GA1UdEQR4MHaCCmV4cGxvcmVyLTSC
+Cmt1YmVybmV0ZXOCEmt1YmVybmV0ZXMuZGVmYXVsdIIWa3ViZXJuZXRlcy5kZWZh
+dWx0LnN2Y4Ika3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FshwQK
+YAABhwTAqAJSMA0GCSqGSIb3DQEBCwUAA4IBAQB20iP/MpkeeMBRJcwk+21D5RXi
+WSaAPDiljyaG9rEzR1qxiD7QWJ2ZwGh36bUTaJbRjEaQe3rRKR8kXsEzRP793F35
+tylww58uczLE86Hl91X6wtRV8+II/fjY7vtUk63GTe6iUhllrAhPs2xZdldTen18
+3ORvUlUN7Lcff6ltgzEhkaHj1F0KMxUBt0g3cBgSpmLqrfsfPvMeyas6NXoLbddT
+nfXQdm/8IuWnIJ3lAOrdqWU0KptomEJt0AQycFgePXcuRJd4+BVPpjt4BdD5m8mq
+3w/LuwRl56lRlxSsxMr3IXUCQ/sIGyFUUzWuHBzb6YKkOpr2301/qUbMZKVi
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=CN=kube-apiserver
+issuer=CN=kubernetes
+---
+Acceptable client certificate CA names
+CN=kubernetes
+CN=front-proxy-ca
+Requested Signature Algorithms: RSA-PSS+SHA256:ECDSA+SHA256:Ed25519:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA384:ECDSA+SHA512:RSA+SHA1:ECDSA+SHA1
+Shared Requested Signature Algorithms: RSA-PSS+SHA256:ECDSA+SHA256:Ed25519:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA384:ECDSA+SHA512
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1576 bytes and written 419 bytes
+Verification error: unable to verify the first certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Server public key is 2048 bit
+This TLS version forbids renegotiation.
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 21 (unable to verify the first certificate)
+---
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_128_GCM_SHA256
+    Session-ID: 78453C963FA9DEA3EDCD0D74CB8DF740613DCD1269062ECBC9BA0435D79B0823
+    Session-ID-ctx:
+    Resumption PSK: C62F59DB9F2D36D7A82D933E3E5609BE9AF89279CFF8F1FB62DA954501FDDF73
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 604800 (seconds)
+    TLS session ticket:
+    0000 - 31 77 90 e5 12 75 fb c2-f4 98 69 52 68 fb 5a 9a   1w...u....iRh.Z.
+    0010 - 28 fc 53 59 99 0e e3 3b-44 af 2b d1 da 30 94 00   (.SY...;D.+..0..
+    0020 - 40 9d b3 e1 72 d7 8b 67-e0 53 76 c2 8a 44 63 8d   @...r..g.Sv..Dc.
+    0030 - 2d 03 70 48 54 7e 5c 54-59 7f 4d d2 87 db ff c1   -.pHT~\TY.M.....
+    0040 - 1b 23 9e bd a3 d8 85 21-80 38 ef 0f 16 d1 34 cf   .#.....!.8....4.
+    0050 - 74 fb 6c 06 84 f7 f6 5b-d6 a3 fd 9c 88 1c ce 69   t.l....[.......i
+    0060 - 55 e4 37 ee ea 76 6d a2-4e                        U.7..vm.N
+
+    Start Time: 1741356809
+    Timeout   : 7200 (sec)
+    Verify return code: 21 (unable to verify the first certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK

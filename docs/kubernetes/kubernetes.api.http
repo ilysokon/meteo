@@ -1,0 +1,10 @@
+curl https://192.168.2.82:6443/api/v1/pods  \
+--key admin.key \
+ --cert admin.crt \
+ --cacert ca.crt
+
+#
+GET https://192.168.2.82:6443/api/v1/pods
+key: admin.key
+cert: admin.crt
+cacert: ca.crt

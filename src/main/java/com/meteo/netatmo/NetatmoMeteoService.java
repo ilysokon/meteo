@@ -18,7 +18,7 @@ public class NetatmoMeteoService implements GeometeoService {
 
 	@Override
 	public Geometeo getMeteo() {
-		LOG.info("Gathering Netatmo meteo data");
+		LOG.info("Getting meteo data from Netatmo serveer");
 
 		return new Geometeo("Netatmo");
 	}

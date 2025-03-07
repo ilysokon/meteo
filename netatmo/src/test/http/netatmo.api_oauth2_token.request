@@ -1,0 +1,11 @@
+POST https://api.netatmo.com/oauth2/token
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+Authorization: Bearer 61ec5c9e06cc231aa74e2978|1ef7335cc2405ea8cb8b26727e5ab14b
+Content-Length: 191
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+grant_type=refresh_token&refresh_token=61ec5c9e06cc231aa74e2978%7C6921976826fe665c21231c2a926d0b6d&client_id=65757c71fcc8cd8fda0399fe&client_secret=Kn85T8tRUl5ovBTMCqlwcagAkVJW1xg4OAKXvuTsJuc
+
+###

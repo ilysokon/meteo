@@ -14,18 +14,47 @@ client_id={{clientId}}&redirect_uri={{redirectUri}}&scope={{scope}}&state={{stat
 # }
 POST https://api.netatmo.com/oauth2/authorize?
     client_id={{clientId}}
-    &redirect_uri={{redirectUri}}
-    &scope={{scope}}&state={{state}} HTTP/1.1
+    &redirect_uri="{{redirectUri}}"
+    &scope=read_station&state=aaaaa HTTP/1.1
 accept: code
 
+### Authorize
+POST https://app.netatmo.net/oauth2/authorize?client_id=65757c71fcc8cd8fda0399fe&response_type=code&redirect_uri=https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff&scope=read_station&access_token=61ec5c9e06cc231aa74e2978|d5b353d070a5c4a5c6c63b852e6254fe
+
+### Authenticate with Client Credentials
+# {
+#  "error": "invalid_grant"
+# }
+POST https://api.netatmo.com/oauth2/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+Authorization: Bearer 61ec5c9e06cc231aa74e2978|1ef7335cc2405ea8cb8b26727e5ab14b
+
+grant_type=password&client_id={{clientId}}&client_secret={{clientSecret}}&username=igor.lysokon@gmail.com&password={{user_password}}&scope=read_station
+
 ### Token
 # {
 #  "error": "invalid_grant"
 # }
 POST https://api.netatmo.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+authorization: Bearer 61ec5c9e06cc231aa74e2978|d5b353d070a5c4a5c6c63b852e6254fe
 
-grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecret}}&code=1234567&redirect_uri={{redirectUri}}&scope={{scope}}
+grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecret}}&code=7d736cfd11409822b90a80dcce2c154d&redirect_uri={{redirectUri}}&scope=read_station
+
+
+### Authorize within below /oauth2/token
+GET https://api.netatmo.com/oauth2/authorize?client_id=65757c71fcc8cd8fda0399fe&redirect_uri=https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff&scope=read_station
+
+### Token:
+# {
+#  "error": "invalid_grant"
+# }
+POST https://api.netatmo.com/oauth2/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+authorization: Bearer 61ec5c9e06cc231aa74e2978|d5b353d070a5c4a5c6c63b852e6254fe
+
+grant_type=authorization_code&client_id=65757c71fcc8cd8fda0399fe&client_secret=Kn85T8tRUl5ovBTMCqlwcagAkVJW1xg4OAKXvuTsJuc&code=2a41b9ff74c00ba57e4f6394b27f161a&redirect_uri=https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff
+
 
 ### Token
 # {
@@ -33,22 +62,32 @@ grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecre
 # }
 POST https://api.netatmo.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+Authorization: Bearer 61ec5c9e06cc231aa74e2978|1ef7335cc2405ea8cb8b26727e5ab14b
 
-grant_type=authorization_code&client_id={{clientId}}&client_secret={{clientSecret}}&code=1234567&redirect_uri={{redirectUri}}&scope=read_station
+grant_type=password&client_id={{clientId}}&client_secret={{clientSecret}}&code=7d736cfd11409822b90a80dcce2c154d&redirect_uri={{redirectUri}}&scope=read_station
 
 ### Access Token and Refresh Token was generated manually on https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff#form
 
-### Refresh Token - working
 
+# ------------------------ This part is working --------------------------------------------------------------------
+# refreshToken token is generated manually on https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff#form
+
+### Refresh Token - working if refresh_token is still valid
 POST https://api.netatmo.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+Authorization: Bearer 61ec5c9e06cc231aa74e2978|1ef7335cc2405ea8cb8b26727e5ab14b
 
 grant_type=refresh_token&refresh_token={{refreshToken}}&client_id={{clientId}}&client_secret={{clientSecret}}
+
+> {%
+    client.global.set("access_token", response.body.access_token)
+    client.global.set("refresh_token", response.body.refresh_token)
+%}
 
 ### Get All Devices:
 GET {{netatmoApi-protocolHostAndPort}}/api/homesdata HTTP/1.1
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ### /getmeasure - Smart Home Wether Station: [Temperature, Humidity, CO2, Pressure, Noise]
 
@@ -59,7 +98,7 @@ Authorization: Bearer {{accessToken}}
 # GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&scale=1day&type=humidity&optimize=false&real_time=false
 GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&scale=1day&type=noise&optimize=false&real_time=false
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ### /getmeasure - Outdoor module: [Temperature, Humidity]
 
@@ -68,14 +107,14 @@ Authorization: Bearer {{accessToken}}
 GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&module_id={{moduleIdOutdoor}}&scale=1day&type=temperature
 # GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&module_id={{moduleIdOutdoor}}&scale=1day&type=humidity
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ### /getmeasure - Bedroom Main module: [Temperature, Humidity, co2]
 
 # curl -X GET "https://api.netatmo.com/api/getmeasure?device_id=70%3AEE%3A50%3A84%3A33%3A6A&scale=1day&type=temperature&type=humidity&type=co2&optimize=false&real_time=false" -H "accept: application/json" -H "Authorization: {{bearerToken}}"
 GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&module_id={{moduleIdBedroomMain}}&scale=1day&type=humidity&type=temperature
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ### /getmeasure - Bedroom Child module: Temperature, Humidity, co2
 
@@ -86,16 +125,20 @@ Authorization: Bearer {{accessToken}}
 # GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&module_id={{moduleIdBedroomChild}}&scale=30min&type=temperature
 
 # Only December 18 with 30m scale
-GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&module_id={{moduleIdBedroomChild}}&scale=30min&date_begin=1702854000&date_end=1702943999&type=temperature
+# name: Living room, type: livingroom, module id: 70:ee:50:84:33:6a, module type: "NAMain"
+# name: Babyroom,    type: "custom",   module id: 03:00:00:07:11:9c, module type: "NAModule4"
+# name: Спальня,     type: bedroom,    module id: 03:00:00:07:c3:ee, module type: "NAModule4"
+# name: Outdoor,     type: outdoor,    module id: 02:00:00:84:50:66, module type: "NAModule1"
+GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id=70:ee:50:84:33:6a&module_id=02:00:00:84:50:66&scale=30min&date_begin=1702854000&date_end=1702943999&type=temperature
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ### /getstationsdata - working well
 
 # curl -X GET "https://api.netatmo.com/api/getstationsdata?device_id=70%3AEE%3A50%3A84%3A33%3A6A&get_favorites=false" -H "accept: application/json" -H "Authorization: {{bearerToken}}"
 GET {{netatmoApi-protocolHostAndPort}}/api/getstationsdata?device_id={{deviceId}}&get_favorites=false
 accept: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{access_token}}
 
 ###
 
