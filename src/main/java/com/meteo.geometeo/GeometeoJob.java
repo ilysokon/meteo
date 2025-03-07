@@ -25,7 +25,7 @@ public class GeometeoJob {
 
 	@Scheduled(fixedDelay = "10s")
 	void executeEveryTen() {
-		LOG.info("Simple Job every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+		LOG.info("Simple Job is triggered every 10 seconds: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
 		coreMeteoService.handleMeteo();
 	}
 
