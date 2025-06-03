@@ -6,7 +6,7 @@ metadata:
     app: cassandra
 spec:
   serviceName: cassandra
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: cassandra
@@ -78,8 +78,16 @@ spec:
           # but not exactly because the names need to match exactly one of
           # the stateful pod volumes.
           volumeMounts:
-            - name: cassandra-data
-              mountPath: /cassandra_data
+            - mountPath: /cassandra_data  # directory inside pod in the container
+              name: cassandra-data
+              readOnly: false
+      volumes:
+          - name: cassandra-data # should match name in spec.containers.volumeMounts
+            hostPath:
+              path: /usr/lib/meteo/cassandra_data # directory location on host
+              type: Directory                     # this field is optional
+             # persistentVolumeClaim:
+              # claimName: cassandra-data
   # These are converted to volume claims by the controller
   # and mounted at the paths mentioned above.
   # do not use these in production until ssd GCEPersistentDisk or other ssd pd

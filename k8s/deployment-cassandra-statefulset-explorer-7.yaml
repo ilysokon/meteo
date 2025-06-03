@@ -6,7 +6,7 @@ metadata:
     app: cassandra
 spec:
   serviceName: cassandra
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: cassandra
@@ -17,7 +17,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 500
       nodeSelector:
-        kubernetes.io/hostname: explorer-6
+        kubernetes.io/hostname: explorer-7
       containers:
         - name: cassandra
           image: gcr.io/google-samples/cassandra:v14
@@ -78,8 +78,14 @@ spec:
           # but not exactly because the names need to match exactly one of
           # the stateful pod volumes.
           volumeMounts:
-            - name: cassandra-data
-              mountPath: /cassandra_data
+            - mountPath: /cassandra_data
+              name: cassandra-data
+              readOnly: false
+      volumes:
+        - name: cassandra-data
+          hostPath:
+            path: /usr/lib/meteo/cassandra_data
+            type: Directory # this field is optional
   # These are converted to volume claims by the controller
   # and mounted at the paths mentioned above.
   # do not use these in production until ssd GCEPersistentDisk or other ssd pd
@@ -93,10 +99,3 @@ spec:
           requests:
             storage: 1Gi
 ---
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: fast
-provisioner: k8s.io/minikube-hostpath
-parameters:
-  type: pd-ssd
