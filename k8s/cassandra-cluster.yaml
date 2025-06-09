@@ -32,7 +32,7 @@ spec:
             - name: HEAP_NEWSIZE
               value: 100M
             - name: CASSANDRA_SEEDS
-              value: cassandra-0.cassandra.default.svc.cluster.local
+              value: cassandra-0.cassandra.meteo.svc.cluster.local
             - name: CASSANDRA_CLUSTER_NAME
               value: Cassandra
             - name: CASSANDRA_DC
@@ -87,3 +87,24 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /usr/lib/meteo/cassandra_data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  labels:
+    app: cassandra
+  # namespace: meteo
+spec:
+  clusterIP: None  # headless!
+  selector:
+    app: cassandra
+  ports:
+    - name: intra-node
+      port: 7000
+    - name: tls-intra-node
+      port: 7001
+    - name: jmx
+      port: 7199
+    - name: cql
+      port: 9042
