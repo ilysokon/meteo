@@ -1,3 +1,40 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cassandra-pv-1
+spec:
+  storageClassName: local-path
+  persistentVolumeReclaimPolicy: Recycle
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /usr/lib/meteo/cassandra_data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cassandra-pvc-1
+  # namespace: meteo
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cassandra-localpath
+provisioner: rancher.io/local-path
+allowVolumeExpansion: true
+
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -15,7 +52,7 @@ spec:
       labels:
         app: cassandra
     spec:
-      terminationGracePeriodSeconds: 500
+      terminationGracePeriodSeconds: 1800
       nodeSelector:
         kubernetes.io/hostname: explorer-7
       containers:
@@ -55,36 +92,54 @@ spec:
             - name: HEAP_NEWSIZE
               value: 100M
             - name: CASSANDRA_SEEDS
-              value: cassandra-0.cassandra.meteo.svc.cluster.local
+              value: cassandra-0-0.cassandra.meteo.svc.cluster.local
             - name: CASSANDRA_CLUSTER_NAME
               value: "K8Demo"
             - name: CASSANDRA_DC
               value: "DC1-K8Demo"
             - name: CASSANDRA_RACK
               value: "Rack1-K8Demo"
+            - name: CASSANDRA_NUM_TOKENS
+              value: "32"
+            - name: CASSANDRA_START_RPC
+              value: "true"
+            - name: CASSANDRA_RPC_ADDRESS
+              value: "0.0.0.0"
             - name: POD_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-          readinessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - /ready-probe.sh
-            initialDelaySeconds: 15
-            timeoutSeconds: 5
+            - name: CASSANDRA_LISTEN_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CASSANDRA_BROADCAST_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CASSANDRA_BROADCAST_RPC_ADDRESS
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+#          readinessProbe:
+#            exec:
+#              command:
+#                - /bin/bash
+#                - -c
+#                - /ready-probe.sh
+#            initialDelaySeconds: 15
+#            timeoutSeconds: 5
           # These volume mounts are persistent. They are like inline claims,
           # but not exactly because the names need to match exactly one of
           # the stateful pod volumes.
           volumeMounts:
-            - mountPath: /cassandra_data  # directory inside pod in the container
-              name: cassandra-data
+            - name: cassandra-data
+              mountPath: /cassandra_data  # directory inside pod in the container
               readOnly: false
       volumes:
           - name: cassandra-data # should match name in spec.containers.volumeMounts
             persistentVolumeClaim:
-              claimName: cassandra-pvc
+              claimName: cassandra-pvc-1
 
 
 
