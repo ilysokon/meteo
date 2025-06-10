@@ -20,3 +20,6 @@ meteo                cassandra-0-0                              1/1     Running 
 meteo                cassandra-1-0                              1/1     Running   0             13m    172.16.35.167   explorer-7   <none>           <none>
 ```
 deployment-cassandra-statefulset-explorer-with-persistentVolumeClaim.yaml
+
+start_cassandra_on_kubrnetes_cluster_with_jmx_prometheus_javaagent.md
+  -- not yet done, only instruction how to do from ChatGPT
