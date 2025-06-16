@@ -80,5 +80,5 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/deployment.yaml -n meteo
+          kubectl apply -f k8s/deployment-meteo.yaml -n meteo
           kubectl rollout restart deployment meteo-deployment -n meteo
