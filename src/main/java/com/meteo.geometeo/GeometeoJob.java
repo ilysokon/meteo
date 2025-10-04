@@ -14,7 +14,7 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class GeometeoJob {
-	private CoreMeteoService coreMeteoService;
+	private final CoreMeteoService coreMeteoService;
 	private static final Logger LOG = LoggerFactory.getLogger(GeometeoJob.class);
 
 	@Inject()

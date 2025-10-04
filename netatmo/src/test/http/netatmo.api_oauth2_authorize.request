@@ -1,0 +1,1 @@
+GET https://api.netatmo.com/oauth2/authorize?client_id=65757c71fcc8cd8fda0399fe&redirect_uri=https://dev.netatmo.com/apps/65757c71fcc8cd8fda0399ff&scope=read_station
