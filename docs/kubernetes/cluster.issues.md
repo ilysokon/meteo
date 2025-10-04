@@ -55,3 +55,61 @@ The connection to the server geometeo.ddns.net:6447 was refused - did you specif
     The connection to the server geometeo.ddns.net:6447 was refused - did you specify the right host or port?
 
     **Most probably to resolve the issue the commands from _access-kubernetes-api-remotely.md_ are need to be repeated**
+
+
+kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide
+error: error loading config file "/home/explorer/.kube/config": open /home/explorer/.kube/config: permission denied
+    Solution: 
+        sudo chown -R $(id -u):$(id -g) $HOME/.kube/
+
+# 2.Warning  FailedScheduling  14m (x18 over 99m)  default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 node(s) had untolerated taint {node.kubernetes.io/unreachable: }. preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling.
+kubectl describe pod meteo-deployment-854d8db8b7-d9xvc -n meteo
+
+## 2.1. Remove the taints on the master so that you can schedule pods on it.(https://stackoverflow.com/questions/59484509/node-had-taints-that-the-pod-didnt-tolerate-error-when-deploying-to-kubernetes)
+kubectl taint nodes --all node-role.kubernetes.io/master-
+    taint "node-role.kubernetes.io/master" not found
+
+    2.1.1 Nodes NotReady
+    kubectl get nodes --show-labels
+    NAME         STATUS     ROLES           AGE    VERSION    LABELS
+    explorer-4   Ready      control-plane   239d   v1.29.12   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=explorer-4,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node.kubernetes.io/exclude-from-external-load-balancers=
+    explorer-6   NotReady   <none>          239d   v1.29.12   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=explorer-6,kubernetes.io/os=linux
+    explorer-7   NotReady   <none>          239d   v1.29.12   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=explorer-7,kubernetes.io/os=linux
+        
+        kubectl describe node explorer-6 
+        MemoryPressure       Unknown   Fri, 25 Jul 2025 20:54:29 +0200   Sun, 17 Aug 2025 19:46:27 +0200   NodeStatusUnknown   Kubelet stopped posting node status.
+         
+        Solution 1:
+            ssh explorer@explorer-6
+            sudo systemctl restart kubelet
+
+            ssh explorer@explorer-7
+            sudo systemctl restart kubelet    
+             
+            Result: no effect, nothing is changed
+        
+        Solution 2: 
+            Check swap on or off ---> free -m
+            if swap is on , turn off --->sudo swapoff -a
+            sudo reboot
+            now its works.....!
+            
+                explorer@explorer-6: free -m
+                    total        used        free      shared  buff/cache   available
+                    Mem:           15833         500       15232           1         369       15332
+                    Swap:           4095           0        4095
+                explorer@explorer-6:~$ sudo swapoff -a
+                explorer@explorer-6:~$ free -m
+                    total        used        free      shared  buff/cache   available
+                    Mem:           15833         610       14979           1         513       15222
+                    Swap:              0           0           0
+                The same for explorer-7
+                
+            after that all nodes are having status Ready
+
+# 3. Cassandra nodes can't start(deployment-cassandra-statefulset-explorer-6-with-persistentVolumeClaim.yaml and deployment-cassandra-statefulset-explorer-7-with-persistentVolumeClaim.yaml)
+    Solution: 
+        kubectl apply -f coredns.yaml.sed.clean (k8s/coredns.yaml.sed.clean)
+            Result cassandra nodes successfully started
+    
+
