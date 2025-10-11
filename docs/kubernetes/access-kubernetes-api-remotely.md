@@ -17,8 +17,23 @@ https://stackoverflow.com/questions/61871640/access-kubernetes-api-remotely
    sudo rm /etc/kubernetes/pki/apiserver-etcd-client.key
 3. sudo kubeadm init phase certs apiserver --apiserver-cert-extra-sans=geometeo.ddns.net
 
-# Working from command line:
+4. generate admin.key, admin.crt, ca.crt 
 admin.key, admin.crt, ca.crt generated like described in https://stackoverflow.com/questions/61871640/access-kubernetes-api-remotely
+sudo kubeadm init phase certs apiserver --apiserver-cert-extra-sans=geometeo.ddns.net
+
+**client-key-data:** (.kube/config)
+echo -n "LS0...Cg==" | base64 -d > admin.key
+
+**client-certificate-data:** (.kube/config)
+echo -n "LS0...Cg==" | base64 -d > admin.crt
+
+**certificate-authority-data:** (.kube/config)
+echo -n "LS0...Cg==" | base64 -d > ca.crt
+
+5. change .kube/config to have geometeo.ddns.net in 
+6. sudo chmod 777 ~/.kube/config
+
+7. sudo reboot
 
 curl https://192.168.2.82:6443/api/v1/pods  \
 --key admin.key \
