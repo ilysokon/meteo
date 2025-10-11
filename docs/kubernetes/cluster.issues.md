@@ -55,19 +55,40 @@ The connection to the server geometeo.ddns.net:6447 was refused - did you specif
     The connection to the server geometeo.ddns.net:6447 was refused - did you specify the right host or port?
 
     **Most probably to resolve the issue the commands from _access-kubernetes-api-remotely.md_ are need to be repeated**
+        
+After the command 
+    sudo kubeadm reset 
+  were applied all files in cd /etc/kubernetes/pki/ were removed and the error 
+  "The connection to the server geometeo.ddns.net:6447 was refused - did you specify the right host or port?" is appeared
+    
+    to resolve:
+      kubeamd init
+      and then 
+        kubeadm join all nodes again. the join command is given by the "kubeamd init" command
 
+kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide
+Unable to connect to the server: tls: failed to verify certificate: x509: certificate signed by unknown authority (possibly because of "crypto/rsa: verification error" while trying to verify candidate authority certificate "kubernetes")          
+    This error often occurs when you are using an old or wrong config from a previous kubernetes installation or setup.
+
+            The below commands will remove the old or wrong config and copy the new config to the .kube directory as well as set the correct permissions. 
+            You can first make a backup of the old or wrong config if you think you might still need using the command mv $HOME/.kube $HOME/.kube.bak:
+
+            rm -rf $HOME/.kube || true    
+            mkdir -p $HOME/.kube   
+            sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config   
+            sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide
 error: error loading config file "/home/explorer/.kube/config": open /home/explorer/.kube/config: permission denied
-    Solution: 
-        sudo chown -R $(id -u):$(id -g) $HOME/.kube/
+Solution:
+sudo chown -R $(id -u):$(id -g) $HOME/.kube/
 
 # 2.Warning  FailedScheduling  14m (x18 over 99m)  default-scheduler  0/3 nodes are available: 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: }, 2 node(s) had untolerated taint {node.kubernetes.io/unreachable: }. preemption: 0/3 nodes are available: 3 Preemption is not helpful for scheduling.
 kubectl describe pod meteo-deployment-854d8db8b7-d9xvc -n meteo
 
 ## 2.1. Remove the taints on the master so that you can schedule pods on it.(https://stackoverflow.com/questions/59484509/node-had-taints-that-the-pod-didnt-tolerate-error-when-deploying-to-kubernetes)
 kubectl taint nodes --all node-role.kubernetes.io/master-
-    taint "node-role.kubernetes.io/master" not found
+taint "node-role.kubernetes.io/master" not found
 
     2.1.1 Nodes NotReady
     kubectl get nodes --show-labels
@@ -111,5 +132,12 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
     Solution: 
         kubectl apply -f coredns.yaml.sed.clean (k8s/coredns.yaml.sed.clean)
             Result cassandra nodes successfully started
+
+        check that cassandra service(k8s/cassandra-service.yaml) is not missing
+            This allows Cassandra pods to discover each other at predictable DNS names like: cassandra-0-0.cassandra.meteo.svc.cluster.local
+        
+        check that seed is defined like below in deployment-cassandra-statefulset-explorer-6-with-persistentVolumeClaim.yaml and deployment-cassandra-statefulset-explorer-7-with-persistentVolumeClaim.yaml
+            - name: CASSANDRA_SEEDS
+              value: cassandra-0-0.cassandra.meteo.svc.cluster.local
     
 
