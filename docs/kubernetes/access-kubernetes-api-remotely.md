@@ -30,7 +30,7 @@ echo -n "LS0...Cg==" | base64 -d > admin.crt
 **certificate-authority-data:** (.kube/config)
 echo -n "LS0...Cg==" | base64 -d > ca.crt
 
-5. change .kube/config to have geometeo.ddns.net in 
+5. change .kube/config to have geometeo.ddns.net in ~/.kube/config
 6. sudo chmod 777 ~/.kube/config
 
 7. sudo reboot
