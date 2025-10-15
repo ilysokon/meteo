@@ -139,5 +139,20 @@ taint "node-role.kubernetes.io/master" not found
         check that seed is defined like below in deployment-cassandra-statefulset-explorer-6-with-persistentVolumeClaim.yaml and deployment-cassandra-statefulset-explorer-7-with-persistentVolumeClaim.yaml
             - name: CASSANDRA_SEEDS
               value: cassandra-0-0.cassandra.meteo.svc.cluster.local
-    
 
+
+kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide
+E1015 16:55:11.829798    2498 memcache.go:265] couldn't get current server API group list: Get "https://geometeo.ddns.net:6443/api?timeout=32s": dial tcp 87.144.189.118:6443: connect: connection refused
+E1015 16:55:11.832111    2498 memcache.go:265] couldn't get current server API group list: Get "https://geometeo.ddns.net:6443/api?timeout=32s": dial tcp 87.144.189.118:6443: connect: connection refused
+E1015 16:55:11.834623    2498 memcache.go:265] couldn't get current server API group list: Get "https://geometeo.ddns.net:6443/api?timeout=32s": dial tcp 87.144.189.118:6443: connect: connection refused
+E1015 16:55:11.836856    2498 memcache.go:265] couldn't get current server API group list: Get "https://geometeo.ddns.net:6443/api?timeout=32s": dial tcp 87.144.189.118:6443: connect: connection refused
+E1015 16:55:11.839656    2498 memcache.go:265] couldn't get current server API group list: Get "https://geometeo.ddns.net:6443/api?timeout=32s": dial tcp 87.144.189.118:6443: connect: connection refused
+The connection to the server geometeo.ddns.net:6443 was refused - did you specify the right host or port?
+    Solution:
+        1. Router: http://192.168.2.1/html/login/login.html?lang=en
+            Internet
+                Port Activation
+                    geometeo-4  
+                            Public    Local
+                        TCP 6443 - --> 6443 -   (before was: TCP 6447 - --> 6443 -)
+        2. Possible just change in explorer-4 (.kube/config) geometeo.ddns.net:6443 to geometeo.ddns.net:6447 
