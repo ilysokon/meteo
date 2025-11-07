@@ -24,7 +24,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: system:coredns
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
   labels:
     kubernetes.io/bootstrapping: rbac-defaults
 roleRef:
@@ -45,13 +46,18 @@ data:
   Corefile: |
     .:53 {
         errors
-        health
+        health {
+          lameduck 5s
+        }
         ready
         kubernetes cluster.local in-addr.arpa ip6.arpa {
            pods insecure
            fallthrough in-addr.arpa ip6.arpa
         }
-        forward . /etc/resolv.conf
+        prometheus :9153
+        forward . /etc/resolv.conf {
+          max_concurrent 1000
+        }
         cache 30
         loop
         reload
@@ -86,14 +92,21 @@ metadata:
     k8s-app: kube-dns
 spec:
   replicas: 2
+  strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
   selector:
     matchLabels:
       k8s-app: kube-dns
+      app.kubernetes.io/name: coredns
   template:
     metadata:
       labels:
         k8s-app: kube-dns
+        app.kubernetes.io/name: coredns
     spec:
+      priorityClassName: system-cluster-critical
       serviceAccountName: coredns
       containers:
         - name: coredns
@@ -119,6 +132,12 @@ spec:
               protocol: TCP
             - containerPort: 9153
               name: metrics
+              protocol: TCP
+            - containerPort: 8080
+              name: liveness
+              protocol: TCP
+            - containerPort: 8181
+              name: readiness
               protocol: TCP
           livenessProbe:
             httpGet:
