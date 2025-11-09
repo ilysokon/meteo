@@ -156,3 +156,67 @@ The connection to the server geometeo.ddns.net:6443 was refused - did you specif
                             Public    Local
                         TCP 6443 - --> 6443 -   (before was: TCP 6447 - --> 6443 -)
         2. Possible just change in explorer-4 (.kube/config) geometeo.ddns.net:6443 to geometeo.ddns.net:6447 
+
+# 4. Nodes: NotRedy
+kubectl get nodes
+NAME         STATUS     ROLES           AGE   VERSION
+explorer-4   Ready      control-plane   35d   v1.29.12
+explorer-6   NotReady   <none>          35d   v1.29.12
+explorer-7   NotReady   <none>          35d   v1.29.12
+
+    journalctl -u kubelet -n 30 --no-pager
+    Nov 09 16:06:56 explorer-6 systemd[1]: kubelet.service: Main process exited, code=exited, status=1/FAILURE
+    Nov 09 16:06:56 explorer-6 systemd[1]: kubelet.service: Failed with result 'exit-code'.
+    Nov 09 16:07:06 explorer-6 systemd[1]: kubelet.service: Scheduled restart job, restart counter is at 568.
+    Nov 09 16:07:06 explorer-6 systemd[1]: Started kubelet.service - kubelet: The Kubernetes Node Agent.
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: Flag --container-runtime-endpoint has been deprecated, This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: Flag --pod-infra-container-image has been deprecated, will be removed in a future release. Image garbage collector will get sandbox image information from CRI.
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.765971    7546 server.go:209] "--pod-infra-container-image will not be pruned by the image garbage collector in kubelet and should also be set in the remote runtime"
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.769395    7546 server.go:492] "Kubelet version" kubeletVersion="v1.29.12"
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.769414    7546 server.go:494] "Golang settings" GOGC="" GOMAXPROCS="" GOTRACEBACK=""
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.769632    7546 server.go:924] "Client rotation is on, will bootstrap in background"
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.770906    7546 certificate_store.go:130] Loading cert/key pair from "/var/lib/kubelet/pki/kubelet-client-current.pem".
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.772387    7546 dynamic_cafile_content.go:157] "Starting controller" name="client-ca-bundle::/etc/kubernetes/pki/ca.crt"
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: I1109 16:07:06.779871    7546 server.go:750] "--cgroups-per-qos enabled, but --cgroup-root was not specified.  defaulting to /"
+    Nov 09 16:07:06 explorer-6 kubelet[7546]: E1109 16:07:06.780002    7546 run.go:74] "command failed" err="failed to run Kubelet: running with swap on is not supported, please disable swap! or set --fail-swap-on flag to false. /proc/swaps contained: [Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority /swap.img                               file\t\t4194300\t\t0\t\t-2]"
+    Nov 09 16:07:06 explorer-6 systemd[1]: kubelet.service: Main process exited, code=exited, status=1/FAILURE
+    Nov 09 16:07:06 explorer-6 systemd[1]: kubelet.service: Failed with result 'exit-code'.
+    Nov 09 16:07:16 explorer-6 systemd[1]: kubelet.service: Scheduled restart job, restart counter is at 569.
+    Nov 09 16:07:16 explorer-6 systemd[1]: Started kubelet.service - kubelet: The Kubernetes Node Agent.
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: Flag --container-runtime-endpoint has been deprecated, This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: Flag --pod-infra-container-image has been deprecated, will be removed in a future release. Image garbage collector will get sandbox image information from CRI.
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.010080    7557 server.go:209] "--pod-infra-container-image will not be pruned by the image garbage collector in kubelet and should also be set in the remote runtime"
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.013367    7557 server.go:492] "Kubelet version" kubeletVersion="v1.29.12"
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.013387    7557 server.go:494] "Golang settings" GOGC="" GOMAXPROCS="" GOTRACEBACK=""
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.013589    7557 server.go:924] "Client rotation is on, will bootstrap in background"
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.014874    7557 certificate_store.go:130] Loading cert/key pair from "/var/lib/kubelet/pki/kubelet-client-current.pem".
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.016701    7557 dynamic_cafile_content.go:157] "Starting controller" name="client-ca-bundle::/etc/kubernetes/pki/ca.crt"
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: I1109 16:07:17.023686    7557 server.go:750] "--cgroups-per-qos enabled, but --cgroup-root was not specified.  defaulting to /"
+    Nov 09 16:07:17 explorer-6 kubelet[7557]: E1109 16:07:17.023811    7557 run.go:74] "command failed" err="failed to run Kubelet: running with swap on is not supported, please disable swap! or set --fail-swap-on flag to false. /proc/swaps contained: [Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority /swap.img                               file\t\t4194300\t\t0\t\t-2]"
+    Nov 09 16:07:17 explorer-6 systemd[1]: kubelet.service: Main process exited, code=exited, status=1/FAILURE
+    Nov 09 16:07:17 explorer-6 systemd[1]: kubelet.service: Failed with result 'exit-code'.
+        Reason:
+        Nov 09 16:07:17 explorer-6 kubelet[7557]: E1109 16:07:17.023811    7557 run.go:74] "command failed" err="failed to run Kubelet: running with swap on is not supported, please disable swap! or set --fail-swap-on flag to false. /proc/swaps contained: [Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority /swap.img 
+        
+        Solution:
+            On all worker noides:
+                sudo swapoff -a
+                sudo systemctl restart kubelet
+
+                To Make the change permanent (disable swap at boot):
+                Edit /etc/fstab and comment out or remove the swap entry:
+                to comment out the line like below
+                # /swap.img     none    swap    sw      0       0
+                save the file and restart kubelet
+                sudo systemctl restart kubelet
+
+            kubectl get nodes
+            NAME         STATUS     ROLES           AGE   VERSION
+            explorer-4   Ready      control-plane   35d   v1.29.12
+            explorer-6   Ready      <none>          35d   v1.29.12
+            explorer-7   Ready      <none>          35d   v1.29.12
+# 5 Pod is terminating for ever
+kube-system   calico-kube-controllers-658d97c59c-x54nf   0/1     Terminating   39               137m   172.16.37.201   explorer-4   <none>           <none>
+    ## Solution:
+    kubectl delete pod -n kube-system -l k8s-app=calico-node
+            
