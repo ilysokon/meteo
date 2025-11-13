@@ -92,7 +92,7 @@ jobs:
         run: |
           TAG=${{ github.sha }}
 
-          # Подставляем тег вместо __IMAGE_TAG__
+          # Replace __IMAGE_TAG__ with the tag 
           sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo.yaml > k8s/deployment-meteo-rendered.yaml
 
           kubectl apply -f k8s/deployment-meteo-rendered.yaml -n meteo
