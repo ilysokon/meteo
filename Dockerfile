@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM openjdk:26-ea
 
 # Copy local code to the container image.
 WORKDIR /meteo
