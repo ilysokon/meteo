@@ -41,7 +41,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/meteo:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/meteo:latest
+            ${{ secrets.DOCKER_USERNAME }}/meteo:${{ github.sha }}
 
       - name: Generate dependency snapshot
         run: mvn dependency:tree -DoutputType=json -DoutputFile=dependencies.json
