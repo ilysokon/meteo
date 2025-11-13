@@ -88,5 +88,11 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/deployment-meteo.yaml -n meteo
-          kubectl rollout restart deployment meteo-deployment -n meteo
+          TAG=${{ github.sha }}
+
+          # Подставляем тег вместо __IMAGE_TAG__
+          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo.yaml > k8s/deployment-meteo-rendered.yaml
+
+          kubectl apply -f k8s/deployment-meteo-rendered.yaml -n meteo
+
+          kubectl rollout status deployment/meteo-deployment -n meteo
