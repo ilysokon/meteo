@@ -1,7 +1,7 @@
 package com.meteo.core.model;
 
 public class Geometeo {
-	private String name;
+	private final String name;
 
 	public Geometeo(String name) {
 		this.name = name;
