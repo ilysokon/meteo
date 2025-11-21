@@ -37,6 +37,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-http-client-jdk</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.serde</groupId>
       <artifactId>micronaut-serde-jackson</artifactId>
       <scope>compile</scope>
@@ -51,6 +56,16 @@
       <artifactId>micronaut-http-client</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.micronaut.rxjava2</groupId>
+      <artifactId>micronaut-rxjava2-http-client</artifactId>
+      <!--<version>2.9.0</version>-->
+    </dependency>
+      <dependency>
+          <groupId>io.projectreactor</groupId>
+          <artifactId>reactor-core</artifactId>
+          <!--<version>3.6.0</version>--> <!-- or latest -->
+      </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-core -->
     <dependency>
       <groupId>org.apache.cassandra</groupId>

@@ -108,7 +108,7 @@ Authorization: Bearer {{access_token}}
 # GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&scale=1day&type=humidity&optimize=false&real_time=false
 GET {{netatmoApi-protocolHostAndPort}}/api/getmeasure?device_id={{deviceId}}&scale=1day&type=noise&optimize=false&real_time=false
 accept: application/json
-Authorization: Bearer {{access_token}}
+Authorization: Bearer {{accessToken}}
 
 ### /getmeasure - Outdoor module: [Temperature, Humidity]
 
