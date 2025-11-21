@@ -1,6 +1,5 @@
 package com.meteo.netatmo;
 
-import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -9,20 +8,19 @@ import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
 import java.net.URI;
-import java.util.List;
 
 import static io.micronaut.http.HttpHeaders.ACCEPT;
 import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 import static io.micronaut.http.HttpHeaders.USER_AGENT;
 
 @Singleton
-public class NetatmoLowLevelClient {
+public class NetatmoLowLevelApiClient {
     private final HttpClient httpClient;
     private final URI uri;
     private final NetatmoConfiguration configuration;
 
-    public NetatmoLowLevelClient(@Client(id = "netatmo") HttpClient httpClient,
-                                 NetatmoConfiguration configuration) {
+    public NetatmoLowLevelApiClient(@Client(id = "netatmo") HttpClient httpClient,
+                                    NetatmoConfiguration configuration) {
         this.httpClient = httpClient;
         uri = UriBuilder.of("/api")
                 .queryParam("device_id", "70:ee:50:84:33:6a")
@@ -35,11 +33,11 @@ public class NetatmoLowLevelClient {
         this.configuration = configuration;
     }
 
-    Publisher<List<String>> fetchMeasure() {
+    Publisher<String> fetchMeasure() {
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(USER_AGENT, "Micronaut HTTP Client")
                 .header(ACCEPT, "application/json")
                 .header(AUTHORIZATION, "Bearer " + configuration.token());
-        return httpClient.retrieve(req, Argument.listOf(String.class));
+        return httpClient.retrieve(req, String.class);
     }
 }

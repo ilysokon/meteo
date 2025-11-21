@@ -1,86 +1,73 @@
 package com.meteo.netatmo;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivex.Flowable;
+import jakarta.inject.Inject;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.meteo.core.geometeo.GeometeoService;
-import com.meteo.core.model.Geometeo;
 
 import jakarta.inject.Singleton;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Singleton
 public class NetatmoMeteoService implements GeometeoService {
 	private static final Logger LOG = LoggerFactory.getLogger(NetatmoMeteoService.class);
+    @Inject
+    ObjectMapper mapper;
 
     private final NetatmoApiClient netatmoApiClient;
-    private final NetatmoLowLevelClient netatmoLowLevelClient;
+    private final NetatmoLowLevelApiClient netatmoLowLevelApiClient;
 
-	public NetatmoMeteoService(final NetatmoApiClient netatmoApiClient, final NetatmoLowLevelClient netatmoLowLevelClient) {
+	public NetatmoMeteoService(final NetatmoApiClient netatmoApiClient, final NetatmoLowLevelApiClient netatmoLowLevelApiClient) {
         this.netatmoApiClient = netatmoApiClient;
-        this.netatmoLowLevelClient = netatmoLowLevelClient;
+        this.netatmoLowLevelApiClient = netatmoLowLevelApiClient;
 
         LOG.info("NetatmoMeteoService is created");
 	}
 
-	@Override
-	public Geometeo getMeteo() {
-		LOG.info("Getting meteo data from Netatmo serveer ...");
-//        netatmoApiClient.retrieve(request, String.class)
-//                .doOnNext(json -> {
-//                    System.out.println("RAW JSON = " + json);
-//                })
-//                .subscribe();
-        netatmoApiClient.fetchMeasurement().subscribe(new Subscriber<>() {
-              @Override
-              public void onSubscribe(Subscription subscription) {
-                  subscription.request(5);
-              }
+	//@Override
+	public Publisher<Map<Long, Double>> getMeteo2() {
+		LOG.info("Getting meteo data from Netatmo Api Client ...");
 
-              @Override
-              public void onNext(String stringObjectMap) {
-                  LOG.info("onNext: " + stringObjectMap);
-              }
+        return Flowable.fromPublisher(netatmoApiClient.fetchMeasure())
+                .map(json -> {
+                    JsonNode root = mapper.readTree(json);
+                    JsonNode bodyNode = root.get("body");
 
-              @Override
-              public void onError(Throwable throwable) {
-                  LOG.error("onError " + throwable);
-              }
+                    Map<Long, Double> result = new TreeMap<>();
+                    bodyNode.fields().forEachRemaining(entry -> {
+                        long ts = Long.parseLong(entry.getKey());
+                        double value = entry.getValue().get(0).asDouble();
+                        result.put(ts, value);
+                    });
 
-              @Override
-              public void onComplete() {
-                  LOG.info("completed");
-              }
-        });
+                    return result;
+                });
+	}
 
-        netatmoLowLevelClient.fetchMeasure()
-        .subscribe(new Subscriber<>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
-                subscription.request(1);
-            }
+    @Override
+	public Publisher<Map<Long, Double>> getMeteo() {
+		LOG.info("Getting meteo data from Netatmo Low Level Api client ...");
 
-            @Override
-            public void onNext(List<String> strings) {
-                strings.forEach(LOG::info);
-            }
+        return Flowable.fromPublisher(netatmoLowLevelApiClient.fetchMeasure())
+                .map(json -> {
+                    JsonNode root = mapper.readTree(json);
+                    JsonNode bodyNode = root.get("body");
 
-            @Override
-            public void onError(Throwable throwable) {
-                LOG.error("onError " + throwable);
-            }
+                    Map<Long, Double> result = new TreeMap<>();
+                    bodyNode.fields().forEachRemaining(entry -> {
+                        long ts = Long.parseLong(entry.getKey());
+                        double value = entry.getValue().get(0).asDouble();
+                        result.put(ts, value);
+                    });
 
-            @Override
-            public void onComplete() {
-                LOG.info("completed");
-            }
-        });
-
-		return new Geometeo("Netatmo");
+                    return result;
+                });
 	}
 }
