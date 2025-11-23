@@ -6,9 +6,9 @@
         "date_setup": 1643274748,
         "last_setup": 1643274748,
         "type": "NAMain",
-        "last_status_store": 1740690809,
-        "firmware": 204,
-        "wifi_status": 57,
+        "last_status_store": 1763859440,
+        "firmware": 300,
+        "wifi_status": 62,
         "reachable": true,
         "co2_calibrating": false,
         "data_type": [
@@ -22,7 +22,7 @@
           "altitude": 520,
           "city": "Munich",
           "country": "DE",
-          "timezone": "Europe\/Berlin",
+          "timezone": "Europe/Berlin",
           "location": [
             11.630302,
             48.171835
@@ -32,19 +32,15 @@
         "home_id": "61f261fc279d4b70f342a7eb",
         "home_name": "Мой дом",
         "dashboard_data": {
-          "time_utc": 1740690807,
-          "Temperature": 19.8,
-          "CO2": 3145,
-          "Humidity": 65,
-          "Noise": 32,
-          "Pressure": 1017.9,
-          "AbsolutePressure": 956.7,
-          "min_temp": 19.5,
-          "max_temp": 20.7,
-          "date_max_temp": 1740654738,
-          "date_min_temp": 1740629891,
-          "temp_trend": "down",
-          "pressure_trend": "up"
+          "time_utc": 1763859438,
+          "Temperature": 17.9,
+          "CO2": 2741,
+          "Humidity": 55,
+          "Noise": 33,
+          "Pressure": 1018,
+          "AbsolutePressure": 956.8,
+          "temp_trend": "stable",
+          "pressure_trend": "down"
         },
         "modules": [
           {
@@ -56,51 +52,43 @@
               "Temperature",
               "Humidity"
             ],
-            "battery_percent": 80,
+            "battery_percent": 54,
             "reachable": true,
             "firmware": 53,
-            "last_message": 1740690806,
-            "last_seen": 1740690780,
-            "rf_status": 70,
-            "battery_vp": 5638,
+            "last_message": 1763859436,
+            "last_seen": 1763859404,
+            "rf_status": 73,
+            "battery_vp": 5170,
             "dashboard_data": {
-              "time_utc": 1740690780,
-              "Temperature": 4.7,
-              "Humidity": 76,
-              "min_temp": 4.4,
-              "max_temp": 7.5,
-              "date_max_temp": 1740651660,
-              "date_min_temp": 1740636843,
+              "time_utc": 1763859404,
+              "Temperature": -1.1,
+              "Humidity": 67,
               "temp_trend": "stable"
             }
           },
           {
             "_id": "03:00:00:07:c3:ee",
             "type": "NAModule4",
-            "module_name": "Living room",
+            "module_name": "Bedroom",
             "last_setup": 1645207137,
             "data_type": [
               "Temperature",
               "CO2",
               "Humidity"
             ],
-            "battery_percent": 94,
+            "battery_percent": 51,
             "reachable": true,
             "firmware": 53,
-            "last_message": 1740690806,
-            "last_seen": 1740690761,
-            "rf_status": 73,
-            "battery_vp": 5886,
+            "last_message": 1763859436,
+            "last_seen": 1763859417,
+            "rf_status": 75,
+            "battery_vp": 5122,
             "dashboard_data": {
-              "time_utc": 1740690761,
-              "Temperature": 19.8,
-              "CO2": 3728,
-              "Humidity": 66,
-              "min_temp": 18.7,
-              "max_temp": 19.8,
-              "date_max_temp": 1740689889,
-              "date_min_temp": 1740611085,
-              "temp_trend": "up"
+              "time_utc": 1763859417,
+              "Temperature": 18.7,
+              "CO2": 2092,
+              "Humidity": 55,
+              "temp_trend": "stable"
             }
           },
           {
@@ -113,22 +101,18 @@
               "CO2",
               "Humidity"
             ],
-            "battery_percent": 95,
+            "battery_percent": 52,
             "reachable": true,
             "firmware": 53,
-            "last_message": 1740690806,
-            "last_seen": 1740690767,
-            "rf_status": 75,
-            "battery_vp": 5902,
+            "last_message": 1763859436,
+            "last_seen": 1763859411,
+            "rf_status": 71,
+            "battery_vp": 5144,
             "dashboard_data": {
-              "time_utc": 1740690767,
-              "Temperature": 20.4,
-              "CO2": 4048,
-              "Humidity": 67,
-              "min_temp": 20.4,
-              "max_temp": 21.3,
-              "date_max_temp": 1740611091,
-              "date_min_temp": 1740672310,
+              "time_utc": 1763859411,
+              "Temperature": 19,
+              "CO2": 2593,
+              "Humidity": 61,
               "temp_trend": "stable"
             }
           }
@@ -149,6 +133,6 @@
     }
   },
   "status": "ok",
-  "time_exec": 0.04813408851623535,
-  "time_server": 1740691168
+  "time_exec": 0.0259249210357666,
+  "time_server": 1763859620
 }

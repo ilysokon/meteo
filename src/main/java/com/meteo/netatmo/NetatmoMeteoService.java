@@ -12,6 +12,9 @@ import com.meteo.core.geometeo.GeometeoService;
 
 import jakarta.inject.Singleton;
 
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -20,13 +23,17 @@ public class NetatmoMeteoService implements GeometeoService {
 	private static final Logger LOG = LoggerFactory.getLogger(NetatmoMeteoService.class);
     @Inject
     ObjectMapper mapper;
+    Long beginDate;
+    Long endDate;
 
-    private final NetatmoApiClient netatmoApiClient;
-    private final NetatmoLowLevelApiClient netatmoLowLevelApiClient;
+    private final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient;
+    private final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient;
+    @Inject
+    private NetatmoConfiguration netatmoConfiguration;
 
-	public NetatmoMeteoService(final NetatmoApiClient netatmoApiClient, final NetatmoLowLevelApiClient netatmoLowLevelApiClient) {
-        this.netatmoApiClient = netatmoApiClient;
-        this.netatmoLowLevelApiClient = netatmoLowLevelApiClient;
+    public NetatmoMeteoService(final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient, final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient) {
+        this.netatmoGetMeasureApiClient = netatmoGetMeasureApiClient;
+        this.netatmoLowLevelGetMeasureApiClient = netatmoLowLevelGetMeasureApiClient;
 
         LOG.info("NetatmoMeteoService is created");
 	}
@@ -35,7 +42,7 @@ public class NetatmoMeteoService implements GeometeoService {
 	public Publisher<Map<Long, Double>> getMeteo2() {
 		LOG.info("Getting meteo data from Netatmo Api Client ...");
 
-        return Flowable.fromPublisher(netatmoApiClient.fetchMeasure())
+        return Flowable.fromPublisher(netatmoGetMeasureApiClient.fetchMeasure())
                 .map(json -> {
                     JsonNode root = mapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
@@ -52,22 +59,41 @@ public class NetatmoMeteoService implements GeometeoService {
 	}
 
     @Override
-	public Publisher<Map<Long, Double>> getMeteo() {
-		LOG.info("Getting meteo data from Netatmo Low Level Api client ...");
+	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type) {
+		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
+        endDate = getUnixLocalTimestamp();
+        if (beginDate == null) {
+            beginDate = endDate - netatmoConfiguration.measureScaleMinutes() * 60;
+        }
 
-        return Flowable.fromPublisher(netatmoLowLevelApiClient.fetchMeasure())
+        LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
+        return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
                 .map(json -> {
                     JsonNode root = mapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
-
                     Map<Long, Double> result = new TreeMap<>();
-                    bodyNode.fields().forEachRemaining(entry -> {
-                        long ts = Long.parseLong(entry.getKey());
-                        double value = entry.getValue().get(0).asDouble();
-                        result.put(ts, value);
-                    });
+
+                    if (!bodyNode.isEmpty()) {
+                        bodyNode.fields().forEachRemaining(entry -> {
+                            long ts = Long.parseLong(entry.getKey());
+                            double value = entry.getValue().get(0).asDouble();
+                            result.put(ts, value);
+                        });
+                        beginDate = endDate;
+                        LOG.info("beginDate = endDate: " + endDate);
+                    }
 
                     return result;
                 });
 	}
+
+    private static long getUnixLocalTimestamp() {
+        Date date = new Date();
+        Timestamp ts = new Timestamp(date.getTime());
+        // Timestamp → local unix time (seconds)
+        long unixLocalSeconds = ts.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toEpochSecond();
+        return unixLocalSeconds;
+    }
 }

@@ -12,8 +12,8 @@ import static io.micronaut.http.HttpHeaders.USER_AGENT;
 @Client(id = "netatmo")
 @Header(name = USER_AGENT, value = "Micronaut HTTP Client")
 @Header(name = ACCEPT, value = "application/json")
-@Header(name = AUTHORIZATION, value = "Bearer ${netatmo.token}")
-public interface NetatmoApiClient {
-    @Get("/api/getmeasure?device_id=70:ee:50:84:33:6a&scale=1day&type=temperature&type=humidity&type=co2&type=pressure&optimize=false&real_time=false")
+@Header(name = AUTHORIZATION, value = "Bearer ${netatmo.accessToken}")
+public interface NetatmoGetMeasureApiClient {
+    @Get("/api/getmeasure?device_id=70:ee:50:84:33:6a&scale=30min&type=temperature&type=humidity&type=co2&type=pressure&optimize=false&real_time=false")
     Publisher<String> fetchMeasure();
 }

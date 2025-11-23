@@ -14,30 +14,34 @@ import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 import static io.micronaut.http.HttpHeaders.USER_AGENT;
 
 @Singleton
-public class NetatmoLowLevelApiClient {
+public class NetatmoLowLevelGetMeasureApiClient {
     private final HttpClient httpClient;
     private final URI uri;
     private final NetatmoConfiguration configuration;
 
-    public NetatmoLowLevelApiClient(@Client(id = "netatmo") HttpClient httpClient,
-                                    NetatmoConfiguration configuration) {
+    public NetatmoLowLevelGetMeasureApiClient(@Client(id = "netatmo") HttpClient httpClient,
+                                              NetatmoConfiguration configuration) {
         this.httpClient = httpClient;
         uri = UriBuilder.of("/api")
-                .queryParam("device_id", "70:ee:50:84:33:6a")
-                .queryParam("scale", "1day")
-                .queryParam("type", "temperature")
+                .queryParam("scale", "30min")
                 .queryParam("optimize", "false")
-                .queryParam("real_time", "false")
+                .queryParam("real_time", "true")
                 .path("getmeasure")
                 .build();
         this.configuration = configuration;
     }
 
-    Publisher<String> fetchMeasure() {
+    Publisher<String> fetchMeasure(String deviceId, String type, Long beginDate, Long endDate) {
+        var uri = UriBuilder.of(this.uri)
+                .queryParam("device_id", deviceId)
+                .queryParam("type", type)
+                .queryParam("date_begin", beginDate)
+                .queryParam("date_end", endDate)
+                .build();
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(USER_AGENT, "Micronaut HTTP Client")
                 .header(ACCEPT, "application/json")
-                .header(AUTHORIZATION, "Bearer " + configuration.token());
+                .header(AUTHORIZATION, "Bearer " + configuration.accessToken());
         return httpClient.retrieve(req, String.class);
     }
 }

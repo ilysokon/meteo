@@ -29,8 +29,8 @@ public class CoreMeteoService {
 		LOG.info("CoreMeteoService created");
 	}
 
-	public void handleMeteo() {
-		geometeoService.getMeteo().subscribe(new Subscriber<>() {
+	public void fetchMeasure(final String deviceId, final String type) {
+		geometeoService.fetchMeasure(deviceId, type).subscribe(new Subscriber<>() {
             @Override
             public void onSubscribe(Subscription subscription) {
                 subscription.request(5);
@@ -38,8 +38,9 @@ public class CoreMeteoService {
 
             @Override
             public void onNext(Map<Long, Double> measure) {
-                persistenceService.store(new Geometeo(measure));
-                // LOG.info("onNext: " + measure);
+                if(!measure.isEmpty()) {
+                    persistenceService.store(new Geometeo(deviceId, type, measure));
+                }
             }
 
             @Override
