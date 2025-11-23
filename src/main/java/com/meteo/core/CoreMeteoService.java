@@ -1,6 +1,7 @@
 package com.meteo.core;
 
 import com.meteo.core.model.Geometeo;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import reactor.util.retry.Retry;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
 public class CoreMeteoService {
@@ -33,37 +35,63 @@ public class CoreMeteoService {
 	}
 
 	public void fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
+        AtomicInteger countHowManyTimeTheResultWasNotEmpty = new AtomicInteger(0);
         Flux.from(geometeoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
-                .retryWhen(
-                    Retry.backoff(3, Duration.ofSeconds(2)) // 3 попытки, пауза 2 секунды
-                            .maxBackoff(Duration.ofSeconds(30)) // максимум 30 секунд
-                            .filter(ex -> {
-                                LOG.error("Retrying because of error: {}", ex.getMessage());
-                                return true; // retry on all errors
-                            })
-                ).subscribe(new Subscriber<>() {
-                    @Override
-                    public void onSubscribe(Subscription subscription) {
-                        subscription.request(1);
-                    }
+            .subscribe(new Subscriber<>() {
+                @Override
+                public void onSubscribe(Subscription subscription) {
+                    subscription.request(1);
+                }
 
-                    @Override
-                    public void onNext(Map<Long, Double> measure) {
-                        if(!measure.isEmpty()) {
-                            persistenceService.store(new Geometeo(deviceId, type, measure));
-                        }
+                @Override
+                public void onNext(Map<Long, Double> measure) {
+                    if(!measure.isEmpty()) {
+                        persistenceService.store(new Geometeo(deviceId, type, measure));
+                    } else {
+                        LOG.warn("no data in request: " + requestNumber + ", for deviceId " + deviceId);
                     }
+                }
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        LOG.error("onError " + throwable);
-                    }
+                @Override
+                public void onError(Throwable throwable) {
+                    LOG.error("onError " + throwable);
+                }
 
-                    @Override
-                    public void onComplete() {
-                        LOG.info("completed");
+                @Override
+                public void onComplete() {
+                    LOG.info("completed");
+                }
+            });
+
+	}
+
+    public void fetchMeasure(final String deviceId, final String moduleId, final String type, int requestNumber, int allRequestNumbers) {
+        Flux.from(geometeoService.fetchMeasure(deviceId, moduleId, type, requestNumber, allRequestNumbers))
+            .subscribe(new Subscriber<>() {
+                @Override
+                public void onSubscribe(Subscription subscription) {
+                    subscription.request(1);
+                }
+
+                @Override
+                public void onNext(Map<Long, Double> measure) {
+                    if(!measure.isEmpty()) {
+                        persistenceService.store(new Geometeo(deviceId, moduleId, type, measure));
+                    } else {
+                        LOG.warn("no data in request: " + requestNumber + ", for deviceId " + deviceId);
                     }
-                });
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    LOG.error("onError " + throwable);
+                }
+
+                @Override
+                public void onComplete() {
+                    LOG.info("completed");
+                }
+            });
 
 	}
 }

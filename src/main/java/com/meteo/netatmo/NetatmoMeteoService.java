@@ -17,7 +17,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class NetatmoMeteoService implements GeometeoService {
@@ -26,7 +25,6 @@ public class NetatmoMeteoService implements GeometeoService {
     ObjectMapper mapper;
     Long beginDate;
     Long endDate;
-    private Integer currentRequestNumber;
 
     private final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient;
     private final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient;
@@ -36,7 +34,6 @@ public class NetatmoMeteoService implements GeometeoService {
     public NetatmoMeteoService(final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient, final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient) {
         this.netatmoGetMeasureApiClient = netatmoGetMeasureApiClient;
         this.netatmoLowLevelGetMeasureApiClient = netatmoLowLevelGetMeasureApiClient;
-        this.currentRequestNumber = 0;
         LOG.info("NetatmoMeteoService is created");
 	}
 
@@ -61,7 +58,7 @@ public class NetatmoMeteoService implements GeometeoService {
 	}
 
     @Override
-	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
+	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type, int requestNumber, int targetRequestNumber) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
         if (endDate == null || requestNumber == 1) {
             endDate = getUnixLocalTimestamp();
@@ -72,15 +69,6 @@ public class NetatmoMeteoService implements GeometeoService {
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
-//                .retryWhen(errors ->
-//                        errors.zipWith(
-//                                Flowable.range(1, 3),
-//                                (error, retryCount) -> retryCount
-//                        ).flatMap(retryCount -> {
-//                            LOG.warn("Retry #" + retryCount + " because: " + errors);
-//                            return Flowable.timer(retryCount * 2, TimeUnit.SECONDS);
-//                        })
-//                )
                 .map(json -> {
                     JsonNode root = mapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
@@ -92,11 +80,45 @@ public class NetatmoMeteoService implements GeometeoService {
                             double value = entry.getValue().get(0).asDouble();
                             result.put(ts, value);
                         });
-                        if(requestNumber == allRequestNumbers) {
+                        if(requestNumber == targetRequestNumber) {
+                            LOG.info("all requests are done, requestNumber: " + requestNumber + " is reached the " + targetRequestNumber);
                             beginDate = endDate;
                             endDate = null;
                         }
-                        LOG.info("beginDate = endDate: " + endDate);
+                    }
+
+                    return result;
+                });
+	}
+
+    @Override
+	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) {
+		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
+        if (endDate == null || requestNumber == 1) {
+            endDate = getUnixLocalTimestamp();
+        }
+        if (beginDate == null) {
+            beginDate = endDate - netatmoConfiguration.measureScaleMinutes() * 60;
+        }
+
+        LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
+        return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate, endDate))
+                .map(json -> {
+                    JsonNode root = mapper.readTree(json);
+                    JsonNode bodyNode = root.get("body");
+                    Map<Long, Double> result = new TreeMap<>();
+
+                    if (!bodyNode.isEmpty()) {
+                        bodyNode.fields().forEachRemaining(entry -> {
+                            long ts = Long.parseLong(entry.getKey());
+                            double value = entry.getValue().get(0).asDouble();
+                            result.put(ts, value);
+                        });
+                        if(requestNumber == targetRequestNumber) {
+                            LOG.info("all requests are done, requestNumber: " + requestNumber + " is reached the " + targetRequestNumber);
+                            beginDate = endDate;
+                            endDate = null;
+                        }
                     }
 
                     return result;

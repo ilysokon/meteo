@@ -34,17 +34,17 @@ public class GeometeoJob {
 		coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "noise", 5, 13);
 
         // "NAModule1", "Outdoor"
-        coreMeteoService.fetchMeasure("02:00:00:84:50:66", "temperature", 6, 13);
-        coreMeteoService.fetchMeasure("02:00:00:84:50:66", "humidity", 7, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a","02:00:00:84:50:66", "temperature", 6, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a","02:00:00:84:50:66", "humidity", 7, 13);
 
         // "NAModule4", "Bedroom"
-        coreMeteoService.fetchMeasure("03:00:00:07:c3:ee", "temperature", 8, 13);
-        coreMeteoService.fetchMeasure("03:00:00:07:c3:ee", "humidity", 9, 13);
-        coreMeteoService.fetchMeasure("03:00:00:07:c3:ee", "CO2", 10, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "temperature", 8, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "humidity", 9, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "CO2", 10, 13);
 
         // "NAModule4", "Baby room"
-        coreMeteoService.fetchMeasure("03:00:00:07:11:9c", "temperature", 11, 13);
-        coreMeteoService.fetchMeasure("03:00:00:07:11:9c", "humidity", 12, 13);
-        coreMeteoService.fetchMeasure("03:00:00:07:11:9c", "CO2", 13, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "temperature", 11, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "humidity", 12, 13);
+        coreMeteoService.fetchMeasure("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "CO2", 13, 13);
 	}
 }

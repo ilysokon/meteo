@@ -44,4 +44,19 @@ public class NetatmoLowLevelGetMeasureApiClient {
                 .header(AUTHORIZATION, "Bearer " + configuration.accessToken());
         return httpClient.retrieve(req, String.class);
     }
+
+    Publisher<String> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) {
+        var uri = UriBuilder.of(this.uri)
+                .queryParam("device_id", deviceId)
+                .queryParam("module_id", moduleId)
+                .queryParam("type", type)
+                .queryParam("date_begin", beginDate)
+                .queryParam("date_end", endDate)
+                .build();
+        HttpRequest<?> req = HttpRequest.GET(uri)
+                .header(USER_AGENT, "Micronaut HTTP Client")
+                .header(ACCEPT, "application/json")
+                .header(AUTHORIZATION, "Bearer " + configuration.accessToken());
+        return httpClient.retrieve(req, String.class);
+    }
 }
