@@ -11,7 +11,10 @@ import com.meteo.core.persistence.PersistenceService;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Singleton
@@ -29,30 +32,38 @@ public class CoreMeteoService {
 		LOG.info("CoreMeteoService created");
 	}
 
-	public void fetchMeasure(final String deviceId, final String type) {
-		geometeoService.fetchMeasure(deviceId, type).subscribe(new Subscriber<>() {
-            @Override
-            public void onSubscribe(Subscription subscription) {
-                subscription.request(5);
-            }
+	public void fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
+        Flux.from(geometeoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
+                /*.retryWhen(
+                    Retry.backoff(3, Duration.ofSeconds(2)) // 3 попытки, пауза 2 секунды
+                            .maxBackoff(Duration.ofSeconds(30)) // максимум 30 секунд
+                            .filter(ex -> {
+                                LOG.error("Retrying because of error: {}", ex.getMessage());
+                                return true; // retry on all errors
+                            })
+                )*/.subscribe(new Subscriber<>() {
+                    @Override
+                    public void onSubscribe(Subscription subscription) {
+                        subscription.request(1);
+                    }
 
-            @Override
-            public void onNext(Map<Long, Double> measure) {
-                if(!measure.isEmpty()) {
-                    persistenceService.store(new Geometeo(deviceId, type, measure));
-                }
-            }
+                    @Override
+                    public void onNext(Map<Long, Double> measure) {
+                        if(!measure.isEmpty()) {
+                            persistenceService.store(new Geometeo(deviceId, type, measure));
+                        }
+                    }
 
-            @Override
-            public void onError(Throwable throwable) {
-                LOG.error("onError " + throwable);
-            }
+                    @Override
+                    public void onError(Throwable throwable) {
+                        LOG.error("onError " + throwable);
+                    }
 
-            @Override
-            public void onComplete() {
-                LOG.info("completed");
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        LOG.info("completed");
+                    }
+                });
 
 	}
 }

@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class NetatmoMeteoService implements GeometeoService {
@@ -25,6 +26,7 @@ public class NetatmoMeteoService implements GeometeoService {
     ObjectMapper mapper;
     Long beginDate;
     Long endDate;
+    private Integer currentRequestNumber;
 
     private final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient;
     private final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient;
@@ -34,7 +36,7 @@ public class NetatmoMeteoService implements GeometeoService {
     public NetatmoMeteoService(final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient, final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient) {
         this.netatmoGetMeasureApiClient = netatmoGetMeasureApiClient;
         this.netatmoLowLevelGetMeasureApiClient = netatmoLowLevelGetMeasureApiClient;
-
+        this.currentRequestNumber = 0;
         LOG.info("NetatmoMeteoService is created");
 	}
 
@@ -59,15 +61,26 @@ public class NetatmoMeteoService implements GeometeoService {
 	}
 
     @Override
-	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type) {
+	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
-        endDate = getUnixLocalTimestamp();
+        if (endDate == null || requestNumber == 1) {
+            endDate = getUnixLocalTimestamp();
+        }
         if (beginDate == null) {
             beginDate = endDate - netatmoConfiguration.measureScaleMinutes() * 60;
         }
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
+                .retryWhen(errors ->
+                        errors.zipWith(
+                                Flowable.range(1, 3),
+                                (error, retryCount) -> retryCount
+                        ).flatMap(retryCount -> {
+                            LOG.warn("Retry #" + retryCount + " because: " + errors);
+                            return Flowable.timer(retryCount * 2, TimeUnit.SECONDS);
+                        })
+                )
                 .map(json -> {
                     JsonNode root = mapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
@@ -79,7 +92,10 @@ public class NetatmoMeteoService implements GeometeoService {
                             double value = entry.getValue().get(0).asDouble();
                             result.put(ts, value);
                         });
-                        beginDate = endDate;
+                        if(requestNumber == allRequestNumbers) {
+                            beginDate = endDate;
+                            endDate = null;
+                        }
                         LOG.info("beginDate = endDate: " + endDate);
                     }
 

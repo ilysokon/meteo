@@ -36,6 +36,10 @@
       <artifactId>micronaut-http-server-netty</artifactId>
       <scope>compile</scope>
     </dependency>
+      <dependency>
+          <groupId>io.micronaut</groupId>
+          <artifactId>micronaut-retry</artifactId>
+      </dependency>
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-client-jdk</artifactId>

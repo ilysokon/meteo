@@ -6,5 +6,5 @@ import org.reactivestreams.Publisher;
 import java.util.Map;
 
 public interface GeometeoService {
-    Publisher<Map<Long, Double>> fetchMeasure(String deviceId, String type);
+    Publisher<Map<Long, Double>> fetchMeasure(String deviceId, String type, int requestNumber, int allRequestNumbers);
 }
