@@ -34,14 +34,14 @@ public class CoreMeteoService {
 
 	public void fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
         Flux.from(geometeoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
-                /*.retryWhen(
+                .retryWhen(
                     Retry.backoff(3, Duration.ofSeconds(2)) // 3 попытки, пауза 2 секунды
                             .maxBackoff(Duration.ofSeconds(30)) // максимум 30 секунд
                             .filter(ex -> {
                                 LOG.error("Retrying because of error: {}", ex.getMessage());
                                 return true; // retry on all errors
                             })
-                )*/.subscribe(new Subscriber<>() {
+                ).subscribe(new Subscriber<>() {
                     @Override
                     public void onSubscribe(Subscription subscription) {
                         subscription.request(1);

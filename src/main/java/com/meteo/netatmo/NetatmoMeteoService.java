@@ -72,15 +72,15 @@ public class NetatmoMeteoService implements GeometeoService {
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
-                .retryWhen(errors ->
-                        errors.zipWith(
-                                Flowable.range(1, 3),
-                                (error, retryCount) -> retryCount
-                        ).flatMap(retryCount -> {
-                            LOG.warn("Retry #" + retryCount + " because: " + errors);
-                            return Flowable.timer(retryCount * 2, TimeUnit.SECONDS);
-                        })
-                )
+//                .retryWhen(errors ->
+//                        errors.zipWith(
+//                                Flowable.range(1, 3),
+//                                (error, retryCount) -> retryCount
+//                        ).flatMap(retryCount -> {
+//                            LOG.warn("Retry #" + retryCount + " because: " + errors);
+//                            return Flowable.timer(retryCount * 2, TimeUnit.SECONDS);
+//                        })
+//                )
                 .map(json -> {
                     JsonNode root = mapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
