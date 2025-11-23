@@ -1,0 +1,1 @@
+https://api.netatmo.com/api/getmeasure?device_id=70%3Aee%3A50%3A84%3A33%3A6a&scale=30min&type=temperature&date_begin=1763821700&date_end=1763821903&optimize=false&real_time=true
