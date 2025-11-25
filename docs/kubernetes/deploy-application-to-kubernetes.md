@@ -44,6 +44,6 @@ meteo-deployment-68c776cdd6-tnlf9   1/1     Running   0          20m
 
 kubectl logs -f meteo-deployment-68c776cdd6-2wn5b -n meteo
 
-21:27:40.814 [scheduled-executor-thread-3] INFO  com.meteo.geometeo.GeometeoJob - Simple Job every 10 seconds: 21/1/2025 09:27:40
+21:27:40.814 [scheduled-executor-thread-3] INFO  com.meteo.application.geometeo.GeometeoJob - Simple Job every 10 seconds: 21/1/2025 09:27:40
 21:27:40.814 [scheduled-executor-thread-3] INFO  c.meteo.netatmo.NetatmoMeteoService - Gathering Netatmo meteo data
-21:27:40.814 [scheduled-executor-thread-3] INFO  c.m.c.CassandraPersistenceService - Geometeo: com.meteo.core.model.Geometeo@4335a250 is persisted in Cassandra
+21:27:40.814 [scheduled-executor-thread-3] INFO  c.m.c.CassandraPersistenceService - Geometeo: com.meteo.domain.model.Geometeo@4335a250 is persisted in Cassandra

@@ -1,4 +1,4 @@
-package com.meteo.core.model;
+package com.meteo.domain.model;
 
 import java.util.Map;
 

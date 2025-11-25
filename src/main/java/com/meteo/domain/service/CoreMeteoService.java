@@ -1,21 +1,18 @@
-package com.meteo.core;
+package com.meteo.domain.service;
 
-import com.meteo.core.model.Geometeo;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import com.meteo.domain.model.Geometeo;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meteo.core.geometeo.GeometeoService;
-import com.meteo.core.persistence.PersistenceService;
+import com.meteo.application.ports.out.geometeo.GeometeoService;
+import com.meteo.application.ports.out.persistence.PersistenceService;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
-import reactor.util.retry.Retry;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -1,6 +1,5 @@
-package com.meteo.core.geometeo;
+package com.meteo.application.ports.out.geometeo;
 
-import com.meteo.core.model.Geometeo;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.meteo.netatmo;
+package com.meteo.infrastructure.api.netatmo;
 
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;

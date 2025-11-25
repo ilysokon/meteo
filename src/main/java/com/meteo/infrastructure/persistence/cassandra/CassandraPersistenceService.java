@@ -1,10 +1,10 @@
-package com.meteo.cassandra;
+package com.meteo.infrastructure.persistence.cassandra;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meteo.core.model.Geometeo;
-import com.meteo.core.persistence.PersistenceService;
+import com.meteo.domain.model.Geometeo;
+import com.meteo.application.ports.out.persistence.PersistenceService;
 
 import jakarta.inject.Singleton;
 

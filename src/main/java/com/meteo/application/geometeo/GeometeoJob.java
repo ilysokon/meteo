@@ -1,4 +1,4 @@
-package com.meteo.geometeo;
+package com.meteo.application.geometeo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meteo.core.CoreMeteoService;
+import com.meteo.domain.service.CoreMeteoService;
 
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Inject;

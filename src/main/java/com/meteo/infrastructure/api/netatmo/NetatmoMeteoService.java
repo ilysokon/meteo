@@ -1,4 +1,4 @@
-package com.meteo.netatmo;
+package com.meteo.infrastructure.api.netatmo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,7 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.meteo.core.geometeo.GeometeoService;
+import com.meteo.application.ports.out.geometeo.GeometeoService;
 
 import jakarta.inject.Singleton;
 

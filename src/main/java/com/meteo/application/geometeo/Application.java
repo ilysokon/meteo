@@ -1,4 +1,4 @@
-package com.meteo.geometeo;
+package com.meteo.application.geometeo;
 
 import io.micronaut.runtime.Micronaut;
 

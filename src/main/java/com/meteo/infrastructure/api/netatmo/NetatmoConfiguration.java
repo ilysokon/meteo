@@ -1,4 +1,4 @@
-package com.meteo.netatmo;
+package com.meteo.infrastructure.api.netatmo;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
