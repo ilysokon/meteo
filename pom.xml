@@ -20,7 +20,7 @@
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>com.meteo.aot.generated</micronaut.aot.packageName>
     <micronaut.runtime>netty</micronaut.runtime>
-    <exec.mainClass>com.meteo.application.geometeo.Application</exec.mainClass>
+    <exec.mainClass>com.meteo.bootstrap.Application</exec.mainClass>
   </properties>
 
   <repositories>

@@ -1,4 +1,4 @@
-package com.meteo.domain.service;
+package com.meteo.infrastructure.application.geometeo;
 
 import com.meteo.domain.model.Geometeo;
 import org.reactivestreams.Subscriber;
@@ -17,21 +17,21 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
-public class CoreMeteoService {
-	private static final Logger LOG = LoggerFactory.getLogger(CoreMeteoService.class);
+public class ReactiveGeometeoService {
+	private static final Logger LOG = LoggerFactory.getLogger(ReactiveGeometeoService.class);
 
 	private final GeometeoService geometeoService;
 	private final PersistenceService persistenceService;
 
 	@Inject
-	public CoreMeteoService(final GeometeoService geometeoService, final PersistenceService persistenceService) {
+	public ReactiveGeometeoService(final GeometeoService geometeoService, final PersistenceService persistenceService) {
 		this.geometeoService = geometeoService;
 		this.persistenceService = persistenceService;
 
 		LOG.info("CoreMeteoService created");
 	}
 
-	public void fetchMeasure(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
+	public void fetchMeasureAndPersist(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
         AtomicInteger countHowManyTimeTheResultWasNotEmpty = new AtomicInteger(0);
         Flux.from(geometeoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
             .subscribe(new Subscriber<>() {
@@ -62,7 +62,7 @@ public class CoreMeteoService {
 
 	}
 
-    public void fetchMeasure(final String deviceId, final String moduleId, final String type, int requestNumber, int allRequestNumbers) {
+    public void fetchMeasureAndPersist(final String deviceId, final String moduleId, final String type, int requestNumber, int allRequestNumbers) {
         Flux.from(geometeoService.fetchMeasure(deviceId, moduleId, type, requestNumber, allRequestNumbers))
             .subscribe(new Subscriber<>() {
                 @Override
