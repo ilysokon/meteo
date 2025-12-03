@@ -57,7 +57,11 @@ spec:
         kubernetes.io/hostname: explorer-6
       containers:
         - name: cassandra
-          image: gcr.io/google-samples/cassandra:v14
+          # image: gcr.io/google-samples/cassandra:v14
+          # image: cassandra:4.1.10 # <-- CHANGE THIS LINE
+            # You may need to specify the registry if you don't use Docker Hub
+            # e.g., image: docker.io/library/cassandra:4.1.10
+          image: docker.io/library/cassandra:4.1.10
           imagePullPolicy: Always
           ports:
             - containerPort: 7000
