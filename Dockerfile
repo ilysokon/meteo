@@ -8,4 +8,4 @@ COPY . .
 RUN ./mvnw package -DskipTests
 
 # Run the web service on container startup.
-CMD ["java", "-jar", "/meteo/target/meteo-0.1.jar"]
+CMD ["java", "-jar", "/meteo/bootstrap/target/bootstrap-0.1.jar"]
