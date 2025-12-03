@@ -2,13 +2,12 @@ package com.meteo.adapter.api.netatmo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meteo.domain.model.Geometeo;
 import io.reactivex.Flowable;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.meteo.application.ports.out.geometeo.GeometeoService;
 
 import jakarta.inject.Singleton;
 
@@ -19,21 +18,24 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Singleton
-public class NetatmoMeteoService implements GeometeoService {
+public class NetatmoMeteoService {
 	private static final Logger LOG = LoggerFactory.getLogger(NetatmoMeteoService.class);
-    @Inject
-    ObjectMapper mapper;
-    Long beginDate;
-    Long endDate;
+
+    private final ObjectMapper objectMapper;
+
+    private Long beginDate;
+    private Long endDate;
 
     private final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient;
     private final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient;
     @Inject
     private NetatmoConfiguration netatmoConfiguration;
 
-    public NetatmoMeteoService(final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient, final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient) {
+    public NetatmoMeteoService(final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient, final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient, final ObjectMapper objectMapper) {
         this.netatmoGetMeasureApiClient = netatmoGetMeasureApiClient;
         this.netatmoLowLevelGetMeasureApiClient = netatmoLowLevelGetMeasureApiClient;
+        this.objectMapper = objectMapper;
+
         LOG.info("NetatmoMeteoService is created");
 	}
 
@@ -43,7 +45,7 @@ public class NetatmoMeteoService implements GeometeoService {
 
         return Flowable.fromPublisher(netatmoGetMeasureApiClient.fetchMeasure())
                 .map(json -> {
-                    JsonNode root = mapper.readTree(json);
+                    JsonNode root = objectMapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
 
                     Map<Long, Double> result = new TreeMap<>();
@@ -57,8 +59,7 @@ public class NetatmoMeteoService implements GeometeoService {
                 });
 	}
 
-    @Override
-	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String type, int requestNumber, int targetRequestNumber) {
+    public Publisher<Geometeo> fetchMeasure(final String deviceId, final String type, int requestNumber, int targetRequestNumber) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
         if (endDate == null || requestNumber == 1) {
             endDate = getUnixLocalTimestamp();
@@ -70,7 +71,7 @@ public class NetatmoMeteoService implements GeometeoService {
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
                 .map(json -> {
-                    JsonNode root = mapper.readTree(json);
+                    JsonNode root = objectMapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
                     Map<Long, Double> result = new TreeMap<>();
 
@@ -87,12 +88,11 @@ public class NetatmoMeteoService implements GeometeoService {
                         }
                     }
 
-                    return result;
+                    return new Geometeo(deviceId, type, result);
                 });
 	}
 
-    @Override
-	public Publisher<Map<Long, Double>> fetchMeasure(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) {
+    public Publisher<Geometeo> fetchMeasure(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
         if (endDate == null || requestNumber == 1) {
             endDate = getUnixLocalTimestamp();
@@ -104,7 +104,7 @@ public class NetatmoMeteoService implements GeometeoService {
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         return Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate, endDate))
                 .map(json -> {
-                    JsonNode root = mapper.readTree(json);
+                    JsonNode root = objectMapper.readTree(json);
                     JsonNode bodyNode = root.get("body");
                     Map<Long, Double> result = new TreeMap<>();
 
@@ -121,7 +121,7 @@ public class NetatmoMeteoService implements GeometeoService {
                         }
                     }
 
-                    return result;
+                    return new Geometeo(deviceId, moduleId, type, result);
                 });
 	}
 

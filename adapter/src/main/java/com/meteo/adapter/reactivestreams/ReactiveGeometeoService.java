@@ -1,5 +1,6 @@
 package com.meteo.adapter.reactivestreams;
 
+import com.meteo.adapter.api.netatmo.NetatmoMeteoService;
 import com.meteo.domain.model.Geometeo;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -17,23 +18,24 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
-public class ReactiveGeometeoService {
+public class ReactiveGeometeoService implements GeometeoService {
 	private static final Logger LOG = LoggerFactory.getLogger(ReactiveGeometeoService.class);
 
-	private final GeometeoService geometeoService;
+	private final NetatmoMeteoService netatmoMeteoService;
 	private final PersistenceService persistenceService;
 
 	@Inject
-	public ReactiveGeometeoService(final GeometeoService geometeoService, final PersistenceService persistenceService) {
-		this.geometeoService = geometeoService;
+	public ReactiveGeometeoService(final NetatmoMeteoService netatmoMeteoService, final PersistenceService persistenceService) {
+		this.netatmoMeteoService = netatmoMeteoService;
 		this.persistenceService = persistenceService;
 
 		LOG.info("CoreMeteoService created");
 	}
 
+    @Override
 	public void fetchMeasureAndPersist(final String deviceId, final String type, int requestNumber, int allRequestNumbers) {
         AtomicInteger countHowManyTimeTheResultWasNotEmpty = new AtomicInteger(0);
-        Flux.from(geometeoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
+        Flux.from(netatmoMeteoService.fetchMeasure(deviceId, type, requestNumber, allRequestNumbers))
             .subscribe(new Subscriber<>() {
                 @Override
                 public void onSubscribe(Subscription subscription) {
@@ -41,9 +43,9 @@ public class ReactiveGeometeoService {
                 }
 
                 @Override
-                public void onNext(Map<Long, Double> measure) {
-                    if(!measure.isEmpty()) {
-                        persistenceService.store(new Geometeo(deviceId, type, measure));
+                public void onNext(Geometeo geometeo) {
+                    if(!geometeo.getMeasure().isEmpty()) {
+                        persistenceService.store(geometeo);
                     } else {
                         LOG.warn("no data in request: " + requestNumber + ", for deviceId " + deviceId);
                     }
@@ -63,7 +65,7 @@ public class ReactiveGeometeoService {
 	}
 
     public void fetchMeasureAndPersist(final String deviceId, final String moduleId, final String type, int requestNumber, int allRequestNumbers) {
-        Flux.from(geometeoService.fetchMeasure(deviceId, moduleId, type, requestNumber, allRequestNumbers))
+        Flux.from(netatmoMeteoService.fetchMeasure(deviceId, moduleId, type, requestNumber, allRequestNumbers))
             .subscribe(new Subscriber<>() {
                 @Override
                 public void onSubscribe(Subscription subscription) {
@@ -71,9 +73,9 @@ public class ReactiveGeometeoService {
                 }
 
                 @Override
-                public void onNext(Map<Long, Double> measure) {
-                    if(!measure.isEmpty()) {
-                        persistenceService.store(new Geometeo(deviceId, moduleId, type, measure));
+                public void onNext(Geometeo geometeo) {
+                    if(!geometeo.getMeasure().isEmpty()) {
+                        persistenceService.store(geometeo);
                     } else {
                         LOG.warn("no data in request: " + requestNumber + ", for deviceId " + deviceId);
                     }
