@@ -12,6 +12,7 @@
       <module>application</module>
       <module>bootstrap</module>
       <module>domain</module>
+      <module>persistence</module>
   </modules>
 
   <parent>

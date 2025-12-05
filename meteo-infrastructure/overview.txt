@@ -14,6 +14,7 @@ Kubernetes Cluster:
         port: TCP: 6449 to 6443 // kubernetes
         port: TCP: 29 to 22     // ssh
             ssh explorer@geometeo.ddns.net -p 29
+            ssh explorer@explorer-7
 
 Home Assistant:
  RaspberryPi 5:
