@@ -8,3 +8,6 @@ sudo systemctl status containerd
 
 # This deletes the pod immediately without waiting for graceful shutdown.
 kubectl delete pod meteo-deployment-6f9847f7fc-4f5gr -n meteo --force --grace-period=0
+
+# local port : pod port
+kubectl port-forward cassandra-0-0 9042:9042
