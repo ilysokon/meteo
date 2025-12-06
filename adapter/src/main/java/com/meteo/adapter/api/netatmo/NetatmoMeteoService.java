@@ -54,7 +54,7 @@ public class NetatmoMeteoService implements GeometeoService {
         Flux.from(
              Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
                 .map(json -> mapToGeometeoData(requestNumber, targetRequestNumber, json))
-                .map(result -> new Geometeo(deviceId, type, result))
+                .map(result -> new Geometeo(deviceId, type, beginDate, endDate, result))
         ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
     }
 
@@ -69,7 +69,7 @@ public class NetatmoMeteoService implements GeometeoService {
         Flux.from(
               Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate, endDate))
                 .map(json -> mapToGeometeoData(requestNumber, targetRequestNumber, json))
-                .map(result -> new Geometeo(deviceId, moduleId, type, result))
+                .map(result -> new Geometeo(deviceId, moduleId, type, beginDate, endDate, result))
         ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
 	}
 
