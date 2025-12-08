@@ -97,4 +97,4 @@ jobs:
 
           kubectl apply -f k8s/deployment-meteo-rendered.yaml -n meteo
 
-          kubectl rollout status deployment/meteo-deployment -n meteo
+          kubectl rollout status deployment/meteo -n meteo
