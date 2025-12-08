@@ -3,11 +3,11 @@ package com.meteo.persistence;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.meteo.domain.model.Geometeo;
-import com.simba.cassandra.shaded.datastax.driver.core.utils.UUIDs;
-import jakarta.inject.Singleton;
 
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // @Singleton
 public class GeometeoCqlRepository {
@@ -22,25 +22,22 @@ public class GeometeoCqlRepository {
         insertGeometeoPS =
                 session.prepare(
                         "INSERT INTO meteo.geometeo (device_id, module_id, type, date_begin, date_end, scale, optimize, realtime, measure) " +
-                                "VALUES (:device_id, :module_id, :type, :date_begin, :date_end, :scale, :optimize, :realtime, :measure) )");
+                                "VALUES (:device_id, :module_id, :type, :date_begin, :date_end, :scale, :optimize, :realtime, :measure)");
     }
 
-    public UUID insertGeometeo(Geometeo geometeo, UUID timeUUID) {
-        final var timestamp = new Timestamp(UUIDs.unixTimestamp(timeUUID));
-        final var localDateTime = timestamp.toLocalDateTime();
-        final var localDate = localDateTime.toLocalDate();
-
+    public UUID insertGeometeo(final Geometeo geometeo, final UUID timeUUID) {
         var bs = insertGeometeoPS.boundStatementBuilder()
                 .setString("device_id", geometeo.getDeviceId())
                 .setString("module_id", geometeo.getModuleId())
-//                .setInstant("date_begin", timestamp.toInstant())
-                .setLong("date_begin", geometeo.getBeginDate())
-//                .setInstant("date_end", timestamp.toInstant())
-                .setLong("date_end", geometeo.getEndDate())
-                .setString("cale", "30min")
+                .setString("type", geometeo.getType())
+                .setInstant("date_begin", geometeo.getBeginDate())
+//                .setLong("date_begin", geometeo.getBeginDate())
+                .setInstant("date_end", geometeo.getEndDate())
+//                .setLong("date_end", geometeo.getEndDate())
+                .setString("scale", "30min")
                 .setBoolean("optimize", false)
                 .setBoolean("realtime", true)
-                .setMap("measure", geometeo.getMeasure(), Long.class, Double.class)
+                .setMap("measure", geometeo.getMeasure(), Instant.class, Double.class)
                 .build();
 
         session.execute(bs);

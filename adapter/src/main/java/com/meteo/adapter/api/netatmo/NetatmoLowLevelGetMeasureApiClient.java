@@ -1,5 +1,6 @@
 package com.meteo.adapter.api.netatmo;
 
+import com.meteo.adapter.api.netatmo.model.MeteoResponse;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -28,7 +29,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         this.configuration = configuration;
     }
 
-    Publisher<String> fetchMeasure(String deviceId, String type, Long beginDate, Long endDate) {
+    Publisher<MeteoResponse> fetchMeasure(String deviceId, String type, Long beginDate, Long endDate) {
         var uri = UriBuilder.of(this.uri)
                 .queryParam("device_id", deviceId)
                 .queryParam("type", type)
@@ -39,10 +40,10 @@ public class NetatmoLowLevelGetMeasureApiClient {
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.accessToken());
-        return httpClient.retrieve(req, String.class);
+        return httpClient.retrieve(req, MeteoResponse.class);
     }
 
-    Publisher<String> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) {
+    Publisher<MeteoResponse> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) {
         var uri = UriBuilder.of(this.uri)
                 .queryParam("device_id", deviceId)
                 .queryParam("module_id", moduleId)
@@ -54,6 +55,6 @@ public class NetatmoLowLevelGetMeasureApiClient {
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.accessToken());
-        return httpClient.retrieve(req, String.class);
+        return httpClient.retrieve(req, MeteoResponse.class);
     }
 }

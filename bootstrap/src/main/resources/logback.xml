@@ -11,4 +11,6 @@
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
+    <!-- Enable debug for Cassandra driver -->
+    <logger name="com.datastax.oss.driver" level="DEBUG"/>
 </configuration>

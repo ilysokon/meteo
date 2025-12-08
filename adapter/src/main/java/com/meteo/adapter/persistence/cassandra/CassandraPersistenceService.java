@@ -1,7 +1,7 @@
 package com.meteo.adapter.persistence.cassandra;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.meteo.persistence.GeometeoCqlRepository;
-import com.simba.cassandra.shaded.datastax.driver.core.utils.UUIDs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +17,15 @@ import java.util.UUID;
 public class CassandraPersistenceService implements PersistenceService {
 	private static final Logger LOG = LoggerFactory.getLogger(CassandraPersistenceService.class);
     private static final Map<String, Integer> CASSANDRA_NODES = Map.of(
-            "192.168.2.42", 9042,
-            "192.168.2.43", 9042,
-            "192.168.2.44", 9042
+//            "cassandra-0-0", 9042,
+//            "cassandra-1-0", 9042
+            "localhost", 9042
     );
     private GeometeoCqlRepository  geometeoCqlRepository;
 
 	public CassandraPersistenceService() {
         final var cassandraConnector = new CassandraConnector();
-        cassandraConnector.connect(CASSANDRA_NODES, "datacenter1");
+        cassandraConnector.connect(CASSANDRA_NODES, "dc1");
         geometeoCqlRepository = new GeometeoCqlRepository(cassandraConnector.getSession(), "meteo");
         System.out.println("Successfully connected to cassandra: " + cassandraConnector.getSession().toString());
 		LOG.info("CassandraPersistenceService is created");
@@ -33,7 +33,7 @@ public class CassandraPersistenceService implements PersistenceService {
 
 	@Override
 	public void store(final Geometeo geometeo) {
-        final UUID uuid = UUIDs.timeBased();
+        final UUID uuid = Uuids.timeBased();
         geometeoCqlRepository.insertGeometeo(geometeo,  uuid);
 		LOG.info("Geometeo: " + geometeo + " is persisted in Cassandra");
 	}

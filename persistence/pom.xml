@@ -23,11 +23,11 @@
             <artifactId>domain</artifactId>
             <version>0.1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.datastax.jdbc</groupId>
             <artifactId>CasCsandraJDBC42</artifactId>
             <version>4.2</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
 </project>

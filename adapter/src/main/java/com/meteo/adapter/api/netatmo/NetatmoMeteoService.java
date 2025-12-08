@@ -3,6 +3,7 @@ package com.meteo.adapter.api.netatmo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meteo.adapter.api.netatmo.model.MeteoResponse;
 import com.meteo.application.ports.out.geometeo.GeometeoService;
 import com.meteo.application.ports.out.persistence.PersistenceService;
 import com.meteo.domain.model.Geometeo;
@@ -14,11 +15,17 @@ import org.slf4j.LoggerFactory;
 import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 
-import java.sql.Timestamp;
+import javax.swing.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
+
+import static java.util.stream.Collectors.toMap;
 
 @Singleton
 public class NetatmoMeteoService implements GeometeoService {
@@ -26,8 +33,8 @@ public class NetatmoMeteoService implements GeometeoService {
 
     private final ObjectMapper objectMapper;
 
-    private Long beginDate;
-    private Long endDate;
+    private Instant beginDate;
+    private Instant endDate;
 
     private final NetatmoGetMeasureApiClient netatmoGetMeasureApiClient;
     private final NetatmoLowLevelGetMeasureApiClient netatmoLowLevelGetMeasureApiClient;
@@ -47,14 +54,16 @@ public class NetatmoMeteoService implements GeometeoService {
 
 	public void fetchMeasureAndPersist(final String deviceId, final String type, int requestNumber, int targetRequestNumber) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + " and type: " + type);
-        initializeEndDate(requestNumber);
-        initializeBeginDate();
+        Instant endDate = getEndDate(requestNumber);
+        Instant beginDate = getBeginDate();
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         Flux.from(
-             Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate, endDate))
-                .map(json -> mapToGeometeoData(requestNumber, targetRequestNumber, json))
-                .map(result -> new Geometeo(deviceId, type, beginDate, endDate, result))
+             Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, type, beginDate.getEpochSecond(), endDate.getEpochSecond()))
+                .map(meteoResponse -> mapToGeometeoData(requestNumber, targetRequestNumber, meteoResponse))
+                .map(result -> new Geometeo(deviceId, type, beginDate, endDate, result.getBody().entrySet().stream()
+                        .map(entry ->  Map.entry(entry.getKey(), entry.getValue().getFirst()))
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
         ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
     }
 
@@ -62,28 +71,21 @@ public class NetatmoMeteoService implements GeometeoService {
 
     public void fetchMeasureAndPersist(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + ", modedelId: " + moduleId +  " and type: " + type);
-        initializeEndDate(requestNumber);
-        initializeBeginDate();
+        Instant endDate = getEndDate(requestNumber);
+        Instant beginDate = getBeginDate();
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
         Flux.from(
-              Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate, endDate))
-                .map(json -> mapToGeometeoData(requestNumber, targetRequestNumber, json))
-                .map(result -> new Geometeo(deviceId, moduleId, type, beginDate, endDate, result))
+              Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate.getEpochSecond(), endDate.getEpochSecond()))
+                .map(meteResponse -> mapToGeometeoData(requestNumber, targetRequestNumber, meteResponse))
+                .map(result -> new Geometeo(deviceId, moduleId, type, beginDate, endDate, result.getBody().entrySet().stream()
+                        .map(entry ->  Map.entry(entry.getKey(), entry.getValue().getFirst()))
+                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
         ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
 	}
 
-    private Map<Long, Double> mapToGeometeoData(int requestNumber, int targetRequestNumber, String json) throws JsonProcessingException {
-        JsonNode root = objectMapper.readTree(json);
-        JsonNode bodyNode = root.get("body");
-        Map<Long, Double> result = new TreeMap<>();
-
-        if (!bodyNode.isEmpty()) {
-            bodyNode.fields().forEachRemaining(entry -> {
-                long ts = Long.parseLong(entry.getKey());
-                double value = entry.getValue().get(0).asDouble();
-                result.put(ts, value);
-            });
+    private MeteoResponse mapToGeometeoData(int requestNumber, int targetRequestNumber, MeteoResponse meteoResponse) throws JsonProcessingException {
+        if (meteoResponse.getBody() != null ) {
             if(requestNumber == targetRequestNumber) {
                 LOG.info("all requests are done, requestNumber: " + requestNumber + " is reached the " + targetRequestNumber);
                 beginDate = endDate;
@@ -91,28 +93,31 @@ public class NetatmoMeteoService implements GeometeoService {
             }
         }
 
-        return result;
+        return meteoResponse;
     }
 
-    private void initializeBeginDate() {
+    private Instant getBeginDate() {
         if (beginDate == null) {
-            beginDate = endDate - netatmoConfiguration.measureScaleMinutes() * 60;
+            beginDate = endDate.minusSeconds(netatmoConfiguration.measureScaleMinutes() * 60);
         }
+
+        return beginDate;
     }
 
-    private void initializeEndDate(int requestNumber) {
+    private Instant getEndDate(int requestNumber) {
         if (endDate == null || requestNumber == 1) {
             endDate = getUnixLocalTimestamp();
         }
+
+        return endDate;
     }
 
-    private static long getUnixLocalTimestamp() {
+    private static Instant getUnixLocalTimestamp() {
         Date date = new Date();
-        Timestamp ts = new Timestamp(date.getTime());
-        // Timestamp → local unix time (seconds)
-        long unixLocalSeconds = ts.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toEpochSecond();
-        return unixLocalSeconds;
+
+        TimeZone timeZone =  TimeZone.getDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, timeZone.toZoneId());
+        return zonedDateTime.toInstant();
     }
 }

@@ -1,8 +1,11 @@
 package com.meteo.adapter.persistence.cassandra;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,10 @@ class CassandraConnector {
                      .map(node -> new InetSocketAddress(node.getKey(), node.getValue()))
                      .collect(Collectors.toList()))
             .withLocalDatacenter(dataCenter)
+            .withConfigLoader(DriverConfigLoader.programmaticBuilder()
+                    .withDuration(DefaultDriverOption.CONNECTION_INIT_QUERY_TIMEOUT, Duration.ofSeconds(10))
+                    .withString(DefaultDriverOption.PROTOCOL_VERSION, "V4")
+                    .build())
             .build();
     }
 
