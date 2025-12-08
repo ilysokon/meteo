@@ -17,9 +17,9 @@ import java.util.UUID;
 public class CassandraPersistenceService implements PersistenceService {
 	private static final Logger LOG = LoggerFactory.getLogger(CassandraPersistenceService.class);
     private static final Map<String, Integer> CASSANDRA_NODES = Map.of(
-//            "cassandra-0-0", 9042,
-//            "cassandra-1-0", 9042
-            "localhost", 9042
+            "cassandra-0-0", 9042,
+            "cassandra-1-0", 9042
+//            "localhost", 9042
     );
     private GeometeoCqlRepository  geometeoCqlRepository;
 
