@@ -11,3 +11,5 @@ kubectl delete pod meteo-deployment-6f9847f7fc-4f5gr -n meteo --force --grace-pe
 
 # local port : pod port
 kubectl port-forward cassandra-0-0 9042:9042
+
+kubectl apply -f secret.yaml

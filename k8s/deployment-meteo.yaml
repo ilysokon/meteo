@@ -16,5 +16,11 @@ spec:
         - name: meteo
           imagePullPolicy: Always
           image: ilysokon/meteo:__IMAGE_TAG__
+          env:
+            - name: NETATMO_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: meteo-secret
+                  key: NETATMO_ACCESS_TOKEN
           ports:
             - containerPort: 8080
