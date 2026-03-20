@@ -5,6 +5,7 @@ The source code is separated into four modules:
 * `application` - contains the domain services and the ports of the hexagon
 * `adapter` - contains the REST, in-memory and JPA adapters
 * `boostrap` - contains the configuration and bootstrapping logic
+* `persistence` - contains persistence logic
 
 The following diagram shows the hexagonal architecture of the application along with the source code modules:
 
