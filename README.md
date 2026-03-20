@@ -1,3 +1,15 @@
+# Meteo Architecture Overview
+
+The source code is separated into four modules:
+* `domain` - contains the domain model
+* `application` - contains the domain services and the ports of the hexagon
+* `adapter` - contains the REST, in-memory and JPA adapters
+* `boostrap` - contains the configuration and bootstrapping logic
+
+The following diagram shows the hexagonal architecture of the application along with the source code modules:
+
+![Hexagonal Architecture Modules](docs/hexagonal-architecture/hexagonal-architecture-modules.png)
+
 # Hexagonal Architecture in Java Tutorial
 
 [![Build](https://github.com/SvenWoltmann/hexagonal-architecture-java/actions/workflows/build.yml/badge.svg)](https://github.com/SvenWoltmann/hexagonal-architecture-java/actions/workflows/build.yml)
@@ -14,15 +26,3 @@ It is part of the HappyCoders tutorial series on Hexagonal Architecture:
 * [Part 3: Ports and Adapters Java Tutorial: Adding a Database Adapter](https://www.happycoders.eu/software-craftsmanship/ports-and-adapters-java-tutorial-db/).
 * [Part 4: Hexagonal Architecture with Quarkus - Tutorial](https://www.happycoders.eu/software-craftsmanship/hexagonal-architecture-quarkus/).
 * [Part 5: Hexagonal Architecture with Spring Boot - Tutorial](https://www.happycoders.eu/software-craftsmanship/hexagonal-architecture-spring-boot/).
-
-# Architecture Overview
-
-The source code is separated into four modules:
-* `domain` - contains the domain model
-* `application` - contains the domain services and the ports of the hexagon
-* `adapters` - contains the REST, in-memory and JPA adapters
-* `boostrap` - contains the configuration and bootstrapping logic
-
-The following diagram shows the hexagonal architecture of the application along with the source code modules:
-
-![Hexagonal Architecture Modules](docs/hexagonal-architecture/hexagonal-architecture-modules.png)
