@@ -80,6 +80,16 @@
             <version>4.19.0</version>
         </dependency>
         <dependency>
+            <groupId>com.bettercloud</groupId>
+            <artifactId>vault-java-driver</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>io.micronaut.vault</groupId>
+            <artifactId>micronaut-vault</artifactId>
+            <version>4.0.0</version>
+        </dependency>-->
+        <dependency>
             <groupId>io.micronaut.test</groupId>
             <artifactId>micronaut-test-junit5</artifactId>
             <scope>test</scope>

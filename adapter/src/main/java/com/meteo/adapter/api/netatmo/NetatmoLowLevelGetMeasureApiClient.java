@@ -1,5 +1,7 @@
 package com.meteo.adapter.api.netatmo;
 
+import com.bettercloud.vault.VaultException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meteo.adapter.api.netatmo.model.MeteoResponse;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
@@ -16,11 +18,14 @@ public class NetatmoLowLevelGetMeasureApiClient {
     private final HttpClient httpClient;
     private final URI uri;
     private final NetatmoConfiguration configuration;
+    private final VaultService vaultService;
 
     public NetatmoLowLevelGetMeasureApiClient(@Client(id = "netatmo") HttpClient httpClient,
-                                              NetatmoConfiguration configuration) {
+                                              NetatmoConfiguration configuration,
+                                              final VaultService vaultService) {
         this.httpClient = httpClient;
-        uri = UriBuilder.of("/api")
+        this.vaultService = vaultService;
+        this.uri = UriBuilder.of("/api")
                 .queryParam("scale", "30min")
                 .queryParam("optimize", "false")
                 .queryParam("real_time", "true")
@@ -43,7 +48,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         return httpClient.retrieve(req, MeteoResponse.class);
     }
 
-    Publisher<MeteoResponse> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) {
+    Publisher<MeteoResponse> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) throws VaultException, JsonProcessingException {
         var uri = UriBuilder.of(this.uri)
                 .queryParam("device_id", deviceId)
                 .queryParam("module_id", moduleId)
@@ -54,7 +59,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.accessToken());
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + vaultService.getAccessToken());
         return httpClient.retrieve(req, MeteoResponse.class);
     }
 }
