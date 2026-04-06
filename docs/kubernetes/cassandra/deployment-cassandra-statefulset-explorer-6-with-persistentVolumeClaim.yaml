@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: cassandra-pv-0
 spec:
-  storageClassName: local-path
+  storageClassName: cassandra-localpath-0
   persistentVolumeReclaimPolicy: Recycle
   capacity:
     storage: 1Gi
@@ -19,7 +19,7 @@ metadata:
   name: cassandra-pvc-0
   # namespace: meteo
 spec:
-  storageClassName: local-path
+  storageClassName: cassandra-localpath-0
   accessModes:
     - ReadWriteOnce
   resources:
@@ -30,7 +30,7 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: cassandra-localpath
+  name: cassandra-localpath-0
 provisioner: rancher.io/local-path
 allowVolumeExpansion: true
 
@@ -47,6 +47,10 @@ spec:
   selector:
     matchLabels:
       app: cassandra
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+
   template:
     metadata:
       labels:
@@ -57,8 +61,8 @@ spec:
         kubernetes.io/hostname: explorer-6
       containers:
         - name: cassandra
-          image: gcr.io/google-samples/cassandra:v14
-          imagePullPolicy: Always
+          image: docker.io/library/cassandra:4.1.10
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 7000
               name: intra-node
@@ -94,13 +98,16 @@ spec:
             - name: CASSANDRA_SEEDS
               value: cassandra-0-0.cassandra.meteo.svc.cluster.local
             - name: CASSANDRA_CLUSTER_NAME
-              value: "K8Demo"
+              value: "k8s-cassandra"
             - name: CASSANDRA_DC
-              value: "DC1-K8Demo"
+              value: "dc1"
             - name: CASSANDRA_RACK
-              value: "Rack1-K8Demo"
+              value: "rack1"
             - name: CASSANDRA_NUM_TOKENS
-              value: "32"
+              value: "256"
+            # Тип snitch (следует указать, если используете DC / rack)
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: "GossipingPropertyFileSnitch"
             - name: CASSANDRA_START_RPC
               value: "true"
             - name: CASSANDRA_RPC_ADDRESS
