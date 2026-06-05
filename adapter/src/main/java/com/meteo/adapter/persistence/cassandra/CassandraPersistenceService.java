@@ -16,17 +16,13 @@ import java.util.UUID;
 @Singleton
 public class CassandraPersistenceService implements PersistenceService {
 	private static final Logger LOG = LoggerFactory.getLogger(CassandraPersistenceService.class);
-    private static final Map<String, Integer> CASSANDRA_NODES = Map.of(
-             "cassandra-0-0.cassandra.meteo.svc.cluster.local", 9042,
-             "cassandra-1-0.cassandra.meteo.svc.cluster.local", 9042
-//             "localhost", 9042 // for local development: cassandra service via port forwarding
-    );
+
     private GeometeoCqlRepository  geometeoCqlRepository;
 
-	public CassandraPersistenceService() {
+	public CassandraPersistenceService(final CassandraConfiguration cassandraConfiguration) {
         final var cassandraConnector = new CassandraConnector();
-        cassandraConnector.connect(CASSANDRA_NODES, "datacenter1");
-        geometeoCqlRepository = new GeometeoCqlRepository(cassandraConnector.getSession(), "meteo");
+        cassandraConnector.connect(cassandraConfiguration.contactPoints(), cassandraConfiguration.dataCenter());
+        geometeoCqlRepository = new GeometeoCqlRepository(cassandraConnector.getSession(), cassandraConfiguration.keyspace());
         System.out.println("Successfully connected to cassandra: " + cassandraConnector.getSession().toString());
 		LOG.info("CassandraPersistenceService is created");
 	}
