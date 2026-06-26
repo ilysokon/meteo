@@ -35,8 +35,8 @@ public class VaultService {
         //                .build();
 
         // Path jwtPath = Path.of("/var/run/secrets/kubernetes.io/serviceaccount/token");
-        Path jwtPath = Path.of("./k8s/vault/token");
-        String jwt = Files.readString(jwtPath);
+//        Path jwtPath = Path.of("./k8s/vault/token");
+//        String jwt = Files.readString(jwtPath);
 
         // Build config WITHOUT token
 //        VaultConfig config = new VaultConfig()
