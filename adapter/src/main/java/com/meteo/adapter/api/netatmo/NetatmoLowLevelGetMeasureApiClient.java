@@ -34,7 +34,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         this.configuration = configuration;
     }
 
-    Publisher<MeteoResponse> fetchMeasure(String deviceId, String type, Long beginDate, Long endDate) {
+    Publisher<MeteoResponse> fetchMeasure(String deviceId, String type, Long beginDate, Long endDate) throws VaultException, JsonProcessingException {
         var uri = UriBuilder.of(this.uri)
                 .queryParam("device_id", deviceId)
                 .queryParam("type", type)
@@ -44,7 +44,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.accessToken());
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + vaultService.getAccessToken());
         return httpClient.retrieve(req, MeteoResponse.class);
     }
 
