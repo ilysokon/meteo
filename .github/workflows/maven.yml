@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - vault-draft
 
 jobs:
   build:

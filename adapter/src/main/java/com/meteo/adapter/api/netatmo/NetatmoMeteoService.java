@@ -1,5 +1,6 @@
 package com.meteo.adapter.api.netatmo;
 
+import com.bettercloud.vault.VaultException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,20 +70,24 @@ public class NetatmoMeteoService implements GeometeoService {
 
 
 
-    public void fetchMeasureAndPersist(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) {
+    public void fetchMeasureAndPersist(final String deviceId, final String moduleId, final String type, int requestNumber, int targetRequestNumber) throws JsonProcessingException {
 		LOG.info("Getting meteo data from Netatmo Low Level Api client for deviceId: " + deviceId + ", modedelId: " + moduleId +  " and type: " + type);
         Instant endDate = getEndDate(requestNumber);
         Instant beginDate = getBeginDate();
 
         LOG.info("beginDate: " + beginDate + ", endDate: " + endDate);
-        Flux.from(
-              Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate.getEpochSecond(), endDate.getEpochSecond()))
-                .map(meteResponse -> mapToGeometeoData(requestNumber, targetRequestNumber, meteResponse))
-                .map(result -> new Geometeo(deviceId, moduleId, type, beginDate, endDate, result.getBody().entrySet().stream()
-                        .map(entry ->  Map.entry(entry.getKey(), entry.getValue().getFirst()))
-                        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
-        ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
-	}
+        try {
+            Flux.from(
+                  Flowable.fromPublisher(netatmoLowLevelGetMeasureApiClient.fetchMeasure(deviceId, moduleId, type, beginDate.getEpochSecond(), endDate.getEpochSecond()))
+                    .map(meteResponse -> mapToGeometeoData(requestNumber, targetRequestNumber, meteResponse))
+                    .map(result -> new Geometeo(deviceId, moduleId, type, beginDate, endDate, result.getBody().entrySet().stream()
+                            .map(entry ->  Map.entry(entry.getKey(), entry.getValue().getFirst()))
+                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))))
+            ).subscribe(new ReactiveStreamsSubscriber(persistenceService, "no data in request: " + requestNumber + ", for deviceId " + deviceId));
+        } catch (VaultException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private MeteoResponse mapToGeometeoData(int requestNumber, int targetRequestNumber, MeteoResponse meteoResponse) throws JsonProcessingException {
         if (meteoResponse.getBody() != null ) {

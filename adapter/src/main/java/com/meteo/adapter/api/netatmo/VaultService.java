@@ -34,29 +34,30 @@ public class VaultService {
         //                .token(System.getenv("VAULT_TOKEN"))
         //                .build();
 
-        Path jwtPath = Path.of("/var/run/secrets/kubernetes.io/serviceaccount/token");
+        // Path jwtPath = Path.of("/var/run/secrets/kubernetes.io/serviceaccount/token");
+        Path jwtPath = Path.of("./k8s/vault/token");
         String jwt = Files.readString(jwtPath);
 
         // Build config WITHOUT token
-        VaultConfig config = new VaultConfig()
-                .address(System.getenv("VAULT_ADDR"))
-                .nameSpace(System.getenv("VAULT_NAMESPACE"))
-                .build();
-
-        Vault vault = new Vault(config);
-
-        // Login with Kubernetes Auth Method
-        AuthResponse auth = vault.auth()
-                .loginByKubernetes("netatmo-secret-writer", jwt);
-
-        // Extract Vault token
-        String vaultToken = auth.getAuthClientToken();
+//        VaultConfig config = new VaultConfig()
+//                .address("http://localhost:8200"/*System.getenv("VAULT_ADDR")*/)
+//                .nameSpace("meteo"/*"vault"*//*System.getenv("VAULT_NAMESPACE")*/)
+//                .build();
+//
+//        Vault vault = new Vault(config);
+//
+//        // Login with Kubernetes Auth Method
+//        AuthResponse auth = vault.auth()
+//                .loginByKubernetes("netatmo-secret-writer", jwt);
+//
+//        // Extract Vault token
+//        String vaultToken = auth.getAuthClientToken();
 
         // Create a new Vault client using this token
         this.vault = new Vault(
                 new VaultConfig()
                         .address(System.getenv("VAULT_ADDR"))
-                        .token(vaultToken)
+                        .token(System.getenv("VAULT_TOKEN"))
                         .nameSpace(System.getenv("VAULT_NAMESPACE"))
                         .build()
         ).logical();

@@ -50,6 +50,7 @@ public class VaultClient {
         }
 
         // schedule metadata polling
+        final long vaultMetadataPollSeconds = Long.parseLong(System.getenv("VAULT_METADATA_POLL_SECONDS"));
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 if (hasNewVersion()) {
@@ -58,7 +59,8 @@ public class VaultClient {
             } catch (Exception e) {
                 log.error("Error polling Vault metadata: {}", e.getMessage(), e);
             }
-        }, config.metadataPollSeconds, config.metadataPollSeconds, TimeUnit.SECONDS);
+            log.info("Next metadata poll in {} seconds", vaultMetadataPollSeconds);
+        }, vaultMetadataPollSeconds/*config.metadataPollSeconds*/, vaultMetadataPollSeconds/*config.metadataPollSeconds*/, TimeUnit.SECONDS);
     }
 
     /**
@@ -81,7 +83,7 @@ public class VaultClient {
      */
     public synchronized void refreshSecret() throws Exception {
         String token = authenticator.getValidToken();
-        String path = config.kvPath; // e.g. secret/data/myapp
+        String path = System.getenv("VAULT_KV_PATH"); //config.kvPath; // e.g. secret/data/myapp
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(config.getAddress() + "/v1/" + path))
@@ -108,9 +110,9 @@ public class VaultClient {
     private boolean hasNewVersion() throws Exception {
         String token = authenticator.getValidToken();
         // metadata endpoint: secret/metadata/myapp
-        String metadataPath = config.kvPath.replaceFirst("/data/", "/metadata/");
+        String metadataPath = System.getenv("VAULT_KV_PATH")/*config.kvPath*/.replaceFirst("/data/", "/metadata/");
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(config.vaultAddress + "/v1/" + metadataPath))
+                .uri(URI.create(System.getenv("VAULT_ADDR")/*config.vaultAddress*/ + "/v1/" + metadataPath))
                 .header("X-Vault-Token", token)
                 .GET().build();
 

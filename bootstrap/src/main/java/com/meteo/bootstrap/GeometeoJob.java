@@ -3,6 +3,8 @@ package com.meteo.bootstrap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.bettercloud.vault.VaultException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meteo.adapter.api.netatmo.NetatmoMeteoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class GeometeoJob {
 	}
 
 	@Scheduled(fixedDelay = "${scheduler.delay}")
-	void fetchMeasure() {
+	void fetchMeasure() throws VaultException, JsonProcessingException {
 		LOG.info("Simple Job is triggered every 1 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
 		// "NAMain", Living room
         netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "temperature", 1, 13);

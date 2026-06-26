@@ -44,12 +44,12 @@ public class VaultAuthenticator {
     }
 
     private void authenticate() throws Exception {
-        log.info("Authenticating to Vault via Kubernetes auth (role={})", config.vaultKubernetesRole);
-        String jwt = Files.readString(Path.of(config.k8sJwtPath));
+        log.info("Authenticating to Vault via Kubernetes auth (role={})", "meteo-vault-role"/*config.vaultKubernetesRole*/);
+        String jwt = Files.readString(Path.of(System.getenv("VAULT_KV_PATH"))/*Path.of(config.k8sJwtPath)*/);
 
-        Map<String, Object> payload = Map.of("role", config.vaultKubernetesRole, "jwt", jwt);
+        Map<String, Object> payload = Map.of("role", System.getenv("VAULT_K8S_ROLE")/*config.vaultKubernetesRole*/, "jwt", jwt);
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(config.vaultAddress + "/v1/auth/kubernetes/login"))
+                .uri(URI.create(System.getenv("VAULT_ADDR") + "/v1/auth/kubernetes/login"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(payload)))
                 .build();
