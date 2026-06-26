@@ -30,5 +30,7 @@ spec:
               value: "secret/data/meteo"
             - name: VAULT_METADATA_POLL_SECONDS
               value: "60"
+            - name: VAULT_NAMESPACE
+              value: "meteo"
           ports:
             - containerPort: 8080
