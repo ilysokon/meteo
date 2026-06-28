@@ -18,11 +18,11 @@ public class NetatmoLowLevelGetMeasureApiClient {
     private final HttpClient httpClient;
     private final URI uri;
     private final NetatmoConfiguration configuration;
-    private final VaultService vaultService;
+    private final VaultServiceKVv2 vaultService;
 
     public NetatmoLowLevelGetMeasureApiClient(@Client(id = "netatmo") HttpClient httpClient,
                                               NetatmoConfiguration configuration,
-                                              final VaultService vaultService) {
+                                              final VaultServiceKVv2 vaultService) {
         this.httpClient = httpClient;
         this.vaultService = vaultService;
         this.uri = UriBuilder.of("/api")
