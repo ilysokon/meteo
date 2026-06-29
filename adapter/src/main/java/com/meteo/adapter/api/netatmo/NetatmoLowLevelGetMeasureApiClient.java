@@ -44,7 +44,7 @@ public class NetatmoLowLevelGetMeasureApiClient {
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + vaultService.getAccessToken());
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + netatmoAccessToken());
         return httpClient.retrieve(req, MeteoResponse.class);
     }
 
@@ -59,7 +59,11 @@ public class NetatmoLowLevelGetMeasureApiClient {
         HttpRequest<?> req = HttpRequest.GET(uri)
                 .header(HttpHeaders.USER_AGENT, "Micronaut HTTP Client")
                 .header(HttpHeaders.ACCEPT, "application/json")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + vaultService.getAccessToken());
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + netatmoAccessToken());
         return httpClient.retrieve(req, MeteoResponse.class);
+    }
+
+    private String netatmoAccessToken() throws VaultException, JsonProcessingException {
+        return vaultService.getAccessToken().isPresent() ? vaultService.getAccessToken().get() : configuration.accessToken();
     }
 }
