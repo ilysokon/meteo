@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meteo-livingroom
+spec:
+  selector:
+    matchLabels:
+      app: meteo
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: meteo
+    spec:
+      containers:
+        - name: meteo
+          imagePullPolicy: Always
+          image: ilysokon/meteo:__IMAGE_TAG__
+          env:
+            - name: NETATMO_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: meteo-secret
+                  key: NETATMO_ACCESS_TOKEN
+            - name: VAULT_ADDR
+              value: "http://vault.vault.svc:8200"
+            - name: VAULT_K8S_ROLE
+              value: "netatmo-secret-writer"
+            - name: VAULT_KV_PATH
+              value: "secret/data/meteo"
+            - name: VAULT_METADATA_POLL_SECONDS
+              value: "60"
+            - name: VAULT_NAMESPACE
+              value: "meteo"
+            - name: ROOM_NAME
+              value: "LIVINGROOM"
+          ports:
+            - containerPort: 8080

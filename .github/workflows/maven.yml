@@ -94,8 +94,19 @@ jobs:
           TAG=${{ github.sha }}
 
           # Replace __IMAGE_TAG__ with the tag 
-          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo.yaml > k8s/deployment-meteo-rendered.yaml
+          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo-babyroom.yaml > k8s/deployment-meteo-babyroom-rendered.yaml
+          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo-bedroom.yaml > k8s/deployment-meteo-bedroom-rendered.yaml
+          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo-livingroom.yaml > k8s/deployment-meteo-livingroom-rendered.yaml
+          sed -e "s/__IMAGE_TAG__/$TAG/" k8s/deployment-meteo-outdoor.yaml > k8s/deployment-meteo-outdoor-rendered.yaml
 
-          kubectl apply -f k8s/deployment-meteo-rendered.yaml -n meteo
-
-          kubectl rollout status deployment/meteo -n meteo
+          kubectl apply -f k8s/deployment-meteo-babyroom-rendered.yaml -n meteo
+          kubectl rollout status deployment/meteo-babyroom -n meteo
+          
+          kubectl apply -f k8s/deployment-meteo-bedroom-rendered.yaml -n meteo
+          kubectl rollout status deployment/meteo-bedroom -n meteo
+          
+          kubectl apply -f k8s/deployment-meteo-livingroom-rendered.yaml -n meteo
+          kubectl rollout status deployment/meteo-livingroom -n meteo
+          
+          kubectl apply -f k8s/deployment-meteo-outdoor-rendered.yaml -n meteo
+          kubectl rollout status deployment/meteo-outdoor -n meteo

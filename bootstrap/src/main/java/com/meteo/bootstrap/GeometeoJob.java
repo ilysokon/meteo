@@ -27,25 +27,30 @@ public class GeometeoJob {
 	@Scheduled(fixedDelay = "${scheduler.delay}")
 	void fetchMeasure() throws VaultException, JsonProcessingException {
 		LOG.info("Simple Job is triggered every 1 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
-		// "NAMain", Living room
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "temperature", 1, 13);
-		netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "pressure", 2, 13);
-		netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "humidity", 3, 13);
-		netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "CO2", 4, 13);
-		netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "noise", 5, 13);
-
-        // "NAModule1", "Outdoor"
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a","02:00:00:84:50:66", "temperature", 6, 13);
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a","02:00:00:84:50:66", "humidity", 7, 13);
-
-        // "NAModule4", "Bedroom"
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "temperature", 8, 13);
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "humidity", 9, 13);
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "CO2", 10, 13);
-
-        // "NAModule4", "Baby room"
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "temperature", 11, 13);
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "humidity", 12, 13);
-        netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "CO2", 13, 13);
+        String room = System.getenv("ROOM_NAME");
+        switch(room) {
+            case "LIVINGROOM" ->  {
+                // "NAMain", Living room
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "temperature", 1, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "pressure", 2, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "humidity", 3, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "CO2", 4, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "noise", 5, 13);
+            } case "OUTDOOR" -> {
+                // "NAModule1", "Outdoor"
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a","02:00:00:84:50:66", "temperature", 6, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a","02:00:00:84:50:66", "humidity", 7, 13);
+            } case "BEDROOM" -> {
+                // "NAModule4", "Bedroom"
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "temperature", 8, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "humidity", 9, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:c3:ee", "CO2", 10, 13);
+            } case "BABYROOM" -> {
+                // "NAModule4", "Baby room"
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "temperature", 11, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "humidity", 12, 13);
+                netatmoMeteoService.fetchMeasureAndPersist("70:ee:50:84:33:6a", "03:00:00:07:11:9c", "CO2", 13, 13);
+            }
+        }
 	}
 }

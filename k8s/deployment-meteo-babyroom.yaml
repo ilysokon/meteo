@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: meteo
+  name: meteo-babyroom
 spec:
   selector:
     matchLabels:
       app: meteo
-  replicas: 2 # tells deployment to run 2 pods matching the template
+  replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
@@ -32,5 +32,7 @@ spec:
               value: "60"
             - name: VAULT_NAMESPACE
               value: "meteo"
+            - name: ROOM_NAME
+              value: "BABYROOM"
           ports:
             - containerPort: 8080
