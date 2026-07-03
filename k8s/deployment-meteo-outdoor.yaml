@@ -27,11 +27,11 @@ spec:
             - name: VAULT_K8S_ROLE
               value: "netatmo-secret-writer"
             - name: VAULT_KV_PATH
-              value: "secret/data/meteo"
+              value: "secret/meteo"
             - name: VAULT_METADATA_POLL_SECONDS
               value: "60"
             - name: VAULT_NAMESPACE
-              value: "meteo"
+              value: "vault"
             - name: ROOM_NAME
               value: "OUTDOOR"
           ports:
