@@ -75,23 +75,6 @@ public class VaultServiceKVv2Fixed {
         LOG.debug("Vault response raw: {}", response.getData());
 
         // KV v2-safe: already flattened correctly by BetterCloud client
-        return (Map<String, String>) response.getData();
-    }
-
-    // ================= WRITE =================
-
-    public void saveTokens(String accessToken, String refreshToken, long expiresAt) throws VaultException {
-        Map<String, Object> payload = Map.of(
-                ACCESS_TOKEN, accessToken,
-                REFRESH_TOKEN, refreshToken,
-                EXPIRES_AT, expiresAt
-        );
-
-        writeAll(payload);
-    }
-
-    private void writeAll(Map<String, Object> data) throws VaultException {
-        vault.write(PATH, Map.of("data", data));
-        LOG.info("Vault updated at path {}", PATH);
+        return response.getData();
     }
 }
