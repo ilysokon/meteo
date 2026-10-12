@@ -1,0 +1,1 @@
+https://dev.to/giveitatry/deploying-apache-kafka-4x-on-kubernetes-with-kraft-sasl-and-high-availability-3m0k
