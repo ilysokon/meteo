@@ -1,8 +1,8 @@
 package com.meteo.adapter.api.netatmo;
 
-import com.bettercloud.vault.VaultException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meteo.adapter.api.netatmo.model.MeteoResponse;
+import io.github.jopenlibs.vault.VaultException;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;

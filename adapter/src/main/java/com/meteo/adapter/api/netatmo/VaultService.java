@@ -1,20 +1,17 @@
 package com.meteo.adapter.api.netatmo;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Logical;
-import com.bettercloud.vault.response.AuthResponse;
-import com.bettercloud.vault.response.LogicalResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Logical;
+import io.github.jopenlibs.vault.response.LogicalResponse;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,40 +26,13 @@ public class VaultService {
     private final Logical vault;
 
     public VaultService() throws VaultException, IOException {
-        //        VaultConfig config = new VaultConfig()
-        //                .address(System.getenv("VAULT_ADDR"))
-        //                .token(System.getenv("VAULT_TOKEN"))
-        //                .build();
-
-        // Path jwtPath = Path.of("/var/run/secrets/kubernetes.io/serviceaccount/token");
-//        Path jwtPath = Path.of("./k8s/vault/token");
-//        String jwt = Files.readString(jwtPath);
-
-        // Build config WITHOUT token
-//        VaultConfig config = new VaultConfig()
-//                .address("http://localhost:8200"/*System.getenv("VAULT_ADDR")*/)
-//                .nameSpace("meteo"/*"vault"*//*System.getenv("VAULT_NAMESPACE")*/)
-//                .build();
-//
-//        Vault vault = new Vault(config);
-//
-//        // Login with Kubernetes Auth Method
-//        AuthResponse auth = vault.auth()
-//                .loginByKubernetes("netatmo-secret-writer", jwt);
-//
-//        // Extract Vault token
-//        String vaultToken = auth.getAuthClientToken();
-
-        // Create a new Vault client using this token
-        this.vault = new Vault(
+        this.vault = Vault.create(
                 new VaultConfig()
                         .address(System.getenv("VAULT_ADDR"))
                         .token(System.getenv("VAULT_TOKEN"))
                         .nameSpace(System.getenv("VAULT_NAMESPACE"))
                         .build()
         ).logical();
-
-        // this.vault = new Vault(config).logical();
     }
 
     // ================= GETTERS ==================
@@ -80,21 +50,6 @@ public class VaultService {
     public Optional<String> getRefreshToken() throws VaultException, JsonProcessingException {
         Object refreshToken = read(VAULT_PATH).get(REFRESH_TOKEN);
         return refreshToken != null ? Optional.of((String) refreshToken) : Optional.empty();
-    }
-
-    // ================= WRITERS ==================
-
-    /**
-     * Stores all 3 values atomically in Vault.
-     */
-    public void saveTokens(String accessToken, String refreshToken, long expiresAt) throws VaultException {
-        Map<String, Object> data = Map.of(
-                ACCESS_TOKEN, accessToken,
-                REFRESH_TOKEN, refreshToken,
-                EXPIRES_AT, expiresAt
-        );
-
-        write(VAULT_PATH, data);
     }
 
     // ================= INTERNAL ==================

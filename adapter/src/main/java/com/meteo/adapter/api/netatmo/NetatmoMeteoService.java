@@ -1,12 +1,12 @@
 package com.meteo.adapter.api.netatmo;
 
-import com.bettercloud.vault.VaultException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meteo.adapter.api.netatmo.model.MeteoResponse;
 import com.meteo.application.ports.out.geometeo.GeometeoService;
 import com.meteo.application.ports.out.persistence.PersistenceService;
 import com.meteo.domain.model.Geometeo;
+import io.github.jopenlibs.vault.VaultException;
 import io.reactivex.Flowable;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;

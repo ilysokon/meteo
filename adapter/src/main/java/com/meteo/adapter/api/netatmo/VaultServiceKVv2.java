@@ -1,12 +1,12 @@
 package com.meteo.adapter.api.netatmo;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Logical;
-import com.bettercloud.vault.json.JsonValue;
-import com.bettercloud.vault.response.LogicalResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Logical;
+import io.github.jopenlibs.vault.json.JsonValue;
+import io.github.jopenlibs.vault.response.LogicalResponse;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,25 +29,7 @@ public class VaultServiceKVv2 {
     private final Logical vault;
 
     public VaultServiceKVv2() throws Exception {
-        // Kubernetes JWT login
-//        Path jwtPath = Path.of("/var/run/secrets/kubernetes.io/serviceaccount/token");
-//        String jwt = Files.readString(jwtPath);
-//
-//        VaultConfig config = new VaultConfig()
-//                .address(System.getenv("VAULT_ADDR"))
-//                .nameSpace(System.getenv("VAULT_NAMESPACE"))
-//                .token(System.getenv("VAULT_TOKEN"))
-//                .engineVersion(2)
-//                .build();
-//
-//        Vault vaultClient = new Vault(config);
-//
-//        AuthResponse auth = vaultClient.auth()
-//                .loginByKubernetes("netatmo-secret-writer", jwt);
-//
-//        String vaultToken = auth.getAuthClientToken();
-
-        this.vault = new Vault(
+        this.vault = Vault.create(
                 new VaultConfig()
                         .address(System.getenv("VAULT_ADDR"))
                         .token(System.getenv("VAULT_TOKEN"))
@@ -55,21 +37,6 @@ public class VaultServiceKVv2 {
                         .engineVersion(2)
                         .build()
         ).logical();
-    }
-
-    VaultServiceKVv2(Logical vault) {
-        this.vault = vault;
-    }
-
-    public void saveTokens(String accessToken, String refreshToken, long expiresAt) throws VaultException {
-        Map<String, Object> data = Map.of(
-                ACCESS_TOKEN, accessToken,
-                REFRESH_TOKEN, refreshToken,
-                EXPIRES_AT, expiresAt
-        );
-
-        // KV v2 expects {"data": {...}}
-        vault.write(VAULT_PATH, Map.of(DATA, data));
     }
 
     public Map<String, String> readTokens() throws VaultException {

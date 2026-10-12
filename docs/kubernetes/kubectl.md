@@ -8,6 +8,7 @@ sudo systemctl restart containerd
 sudo systemctl status containerd
 
 # This deletes the pod immediately without waiting for graceful shutdown.
+# Also gut when the pod is stuck in the terminating state
 kubectl delete pod meteo-deployment-6f9847f7fc-4f5gr -n meteo --force --grace-period=0
 
 # local port : pod port

@@ -79,10 +79,17 @@
             <artifactId>java-driver-core</artifactId>
             <version>4.19.0</version>
         </dependency>
+        <!--<dependency>
+          <groupId>com.bettercloud</groupId>
+          <artifactId>vault-java-driver</artifactId>
+          <version>5.1.0</version>
+      </dependency>-->
+        <!-- Source: https://mvnrepository.com/artifact/io.github.jopenlibs/vault-java-driver -->
         <dependency>
-            <groupId>com.bettercloud</groupId>
+            <groupId>io.github.jopenlibs</groupId>
             <artifactId>vault-java-driver</artifactId>
-            <version>5.1.0</version>
+            <version>6.2.2</version>
+            <!--<scope>compile</scope>-->
         </dependency>
         <!--<dependency>
             <groupId>io.micronaut.vault</groupId>

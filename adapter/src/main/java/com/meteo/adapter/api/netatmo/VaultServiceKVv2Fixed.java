@@ -1,10 +1,10 @@
 package com.meteo.adapter.api.netatmo;
 
-import com.bettercloud.vault.Vault;
-import com.bettercloud.vault.VaultConfig;
-import com.bettercloud.vault.VaultException;
-import com.bettercloud.vault.api.Logical;
-import com.bettercloud.vault.response.LogicalResponse;
+import io.github.jopenlibs.vault.Vault;
+import io.github.jopenlibs.vault.VaultConfig;
+import io.github.jopenlibs.vault.VaultException;
+import io.github.jopenlibs.vault.api.Logical;
+import io.github.jopenlibs.vault.response.LogicalResponse;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class VaultServiceKVv2Fixed {
                 .nameSpace(System.getenv("VAULT_NAMESPACE"))
                 .build();
 
-        this.vault = new Vault(config).logical();
+        this.vault = Vault.create(config).logical();
     }
 
     // ================= READ METHODS =================

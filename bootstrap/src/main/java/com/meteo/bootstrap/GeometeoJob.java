@@ -3,9 +3,9 @@ package com.meteo.bootstrap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.bettercloud.vault.VaultException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.meteo.adapter.api.netatmo.NetatmoMeteoService;
+import io.github.jopenlibs.vault.VaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
