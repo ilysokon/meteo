@@ -62,7 +62,7 @@ After the command
   "The connection to the server geometeo.ddns.net:6447 was refused - did you specify the right host or port?" is appeared
     
     to resolve:
-      kubeamd init
+      kubeadm init
       and then 
         kubeadm join all nodes again. the join command is given by the "kubeamd init" command
 
@@ -220,3 +220,329 @@ kube-system   calico-kube-controllers-658d97c59c-x54nf   0/1     Terminating   3
     ## Solution:
     kubectl delete pod -n kube-system -l k8s-app=calico-node
             
+# 6 couldn't get current server API group list: the server has asked for the client to provide credentials 
+
+kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide
+E1012 21:22:18.465012 2664224 memcache.go:265] couldn't get current server API group list: the server has asked for the client to provide credentials
+E1012 21:22:18.473260 2664224 memcache.go:265] couldn't get current server API group list: the server has asked for the client to provide credentials
+E1012 21:22:18.481197 2664224 memcache.go:265] couldn't get current server API group list: the server has asked for the client to provide credentials
+E1012 21:22:18.490108 2664224 memcache.go:265] couldn't get current server API group list: the server has asked for the client to provide credentials
+E1012 21:22:18.498278 2664224 memcache.go:265] couldn't get current server API group list: the server has asked for the client to provide credentials
+    https://chatgpt.com/c/6acd625c-50d4-83eb-9ebd-7353a03a1e95
+    сначала определим, падает ли сам API server из-за собственной конфигурации или из-за etcd.
+    sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+    logs ETCD_CONTAINER_ID 2>&1 | tail -80
+
+    sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+    logs 89823b43cd611
+    I1012 22:41:02.622068       1 options.go:222] external host was not specified, using 192.168.2.82
+    I1012 22:41:02.622746       1 server.go:148] Version: v1.29.15
+    I1012 22:41:02.622777       1 server.go:150] "Golang settings" GOGC="" GOMAXPROCS="" GOTRACEBACK=""
+    I1012 22:41:02.873801       1 shared_informer.go:311] Waiting for caches to sync for node_authorizer
+    W1012 22:41:02.877127       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:02Z is after 2026-10-04T17:08:23Z"
+    I1012 22:41:02.878668       1 plugins.go:157] Loaded 12 mutating admission controller(s) successfully in the following order: NamespaceLifecycle,LimitRanger,ServiceAccount,NodeRestriction,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,StorageObjectInUseProtection,RuntimeClass,DefaultIngressClass,MutatingAdmissionWebhook.
+    I1012 22:41:02.878682       1 plugins.go:160] Loaded 13 validating admission controller(s) successfully in the following order: LimitRanger,ServiceAccount,PodSecurity,Priority,PersistentVolumeClaimResize,RuntimeClass,CertificateApproval,CertificateSigning,ClusterTrustBundleAttest,CertificateSubjectRestriction,ValidatingAdmissionPolicy,ValidatingAdmissionWebhook,ResourceQuota.
+    I1012 22:41:02.878968       1 instance.go:297] Using reconciler: lease
+    W1012 22:41:02.879353       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:02Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:02.882095       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:02Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:03.885248       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:03Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:03.887293       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:03Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:03.887503       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:03Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:05.227328       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:05Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:05.411106       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:05Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:05.599609       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:05Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:07.871837       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:07Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:08.022375       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:08Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:08.099713       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:08Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:11.898640       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:11Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:12.310094       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:12Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:12.878669       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:12Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:17.478940       1 logging.go:59] [core] [Channel #5 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:17Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:19.164867       1 logging.go:59] [core] [Channel #2 SubChannel #3] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:19Z is after 2026-10-04T17:08:23Z"
+    W1012 22:41:19.294278       1 logging.go:59] [core] [Channel #1 SubChannel #4] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "transport: authentication handshake failed: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:19Z is after 2026-10-04T17:08:23Z"
+    F1012 22:41:22.879839       1 instance.go:290] Error creating leases: error creating storage factory: context deadline exceeded
+        Теперь причина установлена точно: истёк TLS-сертификат, который используется для подключения kube-apiserver к etcd.
+        Ключевая строка:
+            x509: certificate has expired or is not yet valid:
+            current time 2026-10-12T22:41:02Z
+            is after 2026-10-04T17:08:23Z
+        Сертификат истёк 4 октября 2026 года. Из-за этого API server не может подключиться к etcd на 127.0.0.1:2379, а затем завершается с ошибкой:
+        F1012 22:41:22 ... Error creating leases:
+        error creating storage factory: context deadline exceeded
+
+        С высокой вероятностью это сертификат клиента etcd для API server (apiserver-etcd-client.crt), но перед обновлением нужно подтвердить, какой именно сертификат истёк.
+        sudo kubeadm certs check-expiration
+            [check-expiration] Reading configuration from the cluster...
+            [check-expiration] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+            [check-expiration] Error reading configuration from the Cluster. Falling back to default configuration
+            
+            CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+            admin.conf                 Oct 04, 2026 17:08 UTC   <invalid>       ca                      no      
+            apiserver                  Oct 15, 2026 12:27 UTC   2d              ca                      no      
+            apiserver-etcd-client      Oct 04, 2026 17:08 UTC   <invalid>       etcd-ca                 no      
+            apiserver-kubelet-client   Oct 04, 2026 17:08 UTC   <invalid>       ca                      no      
+            controller-manager.conf    Oct 04, 2026 17:08 UTC   <invalid>       ca                      no      
+            etcd-healthcheck-client    Oct 04, 2026 17:08 UTC   <invalid>       etcd-ca                 no      
+            etcd-peer                  Oct 04, 2026 17:08 UTC   <invalid>       etcd-ca                 no      
+            etcd-server                Oct 04, 2026 17:08 UTC   <invalid>       etcd-ca                 no      
+            front-proxy-client         Oct 04, 2026 17:08 UTC   <invalid>       front-proxy-ca          no      
+            scheduler.conf             Oct 04, 2026 17:08 UTC   <invalid>       ca                      no      
+            super-admin.conf           Oct 04, 2026 17:08 UTC   <invalid>       ca                      no
+            
+            CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+            ca                      Oct 02, 2035 17:08 UTC   8y              no      
+            etcd-ca                 Oct 02, 2035 17:08 UTC   8y              no      
+            front-proxy-ca          Oct 02, 2035 17:08 UTC   8y              no     
+        
+        Отлично, теперь картина ясна. На explorer-4 истекла не одна, а целая группа сертификатов Kubernetes, срок действия которых закончился 4 октября 2026 года. CA-сертификаты при этом действительны до 2035 года — это хорошая новость.
+        Наиболее важные истёкшие сертификаты:
+        - apiserver-etcd-client — API server не может подключиться к etcd. Это непосредственно подтверждено журналом.
+          - etcd-server, etcd-peer, etcd-healthcheck-client — могут нарушать работу самого etcd.
+          - apiserver-kubelet-client и сертификаты в .conf — могут вызвать дополнительные проблемы после восстановления API server.
+            Сертификат apiserver пока действителен до 15 октября 2026 года. Не нужно пересоздавать CA и не нужно сбрасывать кластер. Правильный путь — обновить истёкшие сертификаты, сохранив существующие CA и данные etcd.
+        
+            Шаг 1. Сделай резервную копию
+                На explorer-4:
+                    sudo cp -a /etc/kubernetes \
+                    "/root/kubernetes-backup-$(date +%Y%m%d-%H%M%S)"
+    
+                Это сохранит сертификаты, kubeconfig-файлы и static pod-манифесты.
+            Шаг 2. Обнови сертификаты через kubeadm
+                sudo kubeadm certs renew all
+                Команда обновляет сертификаты, которыми управляет kubeadm, используя существующие CA и ключи. Она не должна удалять данные etcd.
+                После завершения проверь результат:
+                sudo kubeadm certs check-expiration
+                    Reading configuration from the cluster...
+                    [check-expiration] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+                    [check-expiration] Error reading configuration from the Cluster. Falling back to default configuration
+                    
+                    CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+                    admin.conf                 Oct 12, 2027 22:48 UTC   364d            ca                      no      
+                    apiserver                  Oct 12, 2027 22:48 UTC   364d            ca                      no      
+                    apiserver-etcd-client      Oct 12, 2027 22:48 UTC   364d            etcd-ca                 no      
+                    apiserver-kubelet-client   Oct 12, 2027 22:48 UTC   364d            ca                      no      
+                    controller-manager.conf    Oct 12, 2027 22:48 UTC   364d            ca                      no      
+                    etcd-healthcheck-client    Oct 12, 2027 22:48 UTC   364d            etcd-ca                 no      
+                    etcd-peer                  Oct 12, 2027 22:48 UTC   364d            etcd-ca                 no      
+                    etcd-server                Oct 12, 2027 22:48 UTC   364d            etcd-ca                 no      
+                    front-proxy-client         Oct 12, 2027 22:48 UTC   364d            front-proxy-ca          no      
+                    scheduler.conf             Oct 12, 2027 22:48 UTC   364d            ca                      no      
+                    super-admin.conf           Oct 12, 2027 22:48 UTC   364d            ca                      no
+                    
+                    CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+                    ca                      Oct 02, 2035 17:08 UTC   8y              no      
+                    etcd-ca                 Oct 02, 2035 17:08 UTC   8y              no      
+                    front-proxy-ca          Oct 02, 2035 17:08 UTC   8y              no      
+
+            Отлично — сертификаты успешно обновлены. Теперь все перечисленные сертификаты, включая apiserver-etcd-client, etcd-server и etcd-peer, действительны до 12 октября 2027 года. CA-сертификаты остаются действительными до 2035 года.
+            Сообщение Error reading configuration from the Cluster ожидаемо при недоступном API server: kubeadm не смог прочитать конфигурацию из кластера и использовал настройки по умолчанию. Само по себе это не означает, что обновление сертификатов не удалось.
+            Следующий шаг — заставить kube-apiserver перечитать обновлённые сертификаты и проверить, что API server запускается.
+            1. Перезапусти etcd, чтобы он загрузил новые сертификаты
+               На explorer-4 сначала проверь, что манифест существует:
+               sudo ls -l /etc/kubernetes/manifests/etcd.yaml
+
+
+            Поскольку сертификаты etcd тоже обновлены, работающий процесс etcd может продолжать использовать старые сертификаты в памяти.
+            Перед перезапуском: если у тебя несколько control-plane-узлов, не трогай etcd, пока не проверишь состояние остальных участников и кворум. Если это единственный control-plane-узел, короткая недоступность API при перезапуске ожидаема.
+            2. Перезапусти API server
+               Если обновление сертификатов завершилось успешно, после перезапуска etcd можно перезапустить только static pod API server. Способ через временное перемещение манифеста:
+               sudo mkdir -p /root/k8s-manifests-hold
+               sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml \
+               /root/k8s-manifests-hold/
+
+
+            Подожди примерно 20 секунд, затем верни манифест:
+            sudo mv /root/k8s-manifests-hold/kube-apiserver.yaml \
+            /etc/kubernetes/manifests/
+            
+            
+            Kubelet должен обнаружить возвращённый манифест и создать контейнер заново.
+            3. Проверь результат
+               sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+               ps -a | grep kube-apiserver
+
+
+            Затем проверь API локально:
+            kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+            get --raw='/readyz?verbose'
+                [+]ping ok
+                [+]log ok
+                [+]etcd ok
+                [+]etcd-readiness ok
+                [+]informer-sync ok
+                [+]poststarthook/start-kube-apiserver-admission-initializer ok
+                [+]poststarthook/generic-apiserver-start-informers ok
+                [+]poststarthook/priority-and-fairness-config-consumer ok
+                [+]poststarthook/priority-and-fairness-filter ok
+                [+]poststarthook/storage-object-count-tracker-hook ok
+                [+]poststarthook/start-apiextensions-informers ok
+                [+]poststarthook/start-apiextensions-controllers ok
+                [+]poststarthook/crd-informer-synced ok
+                [+]poststarthook/start-service-ip-repair-controllers ok
+                [+]poststarthook/rbac/bootstrap-roles ok
+                [+]poststarthook/scheduling/bootstrap-system-priority-classes ok
+                [+]poststarthook/priority-and-fairness-config-producer ok
+                [+]poststarthook/start-system-namespaces-controller ok
+                [+]poststarthook/bootstrap-controller ok
+                [+]poststarthook/start-cluster-authentication-info-controller ok
+                [+]poststarthook/start-kube-apiserver-identity-lease-controller ok
+                [+]poststarthook/start-kube-apiserver-identity-lease-garbage-collector ok
+                [+]poststarthook/start-legacy-token-tracking-controller ok
+                [+]poststarthook/aggregator-reload-proxy-client-cert ok
+                [+]poststarthook/start-kube-aggregator-informers ok
+                [+]poststarthook/apiservice-registration-controller ok
+                [+]poststarthook/apiservice-status-available-controller ok
+                [+]poststarthook/kube-apiserver-autoregistration ok
+                [+]autoregister-completion ok
+                [+]poststarthook/apiservice-openapi-controller ok
+                [+]poststarthook/apiservice-openapiv3-controller ok
+                [+]poststarthook/apiservice-discovery-controller ok
+                [+]shutdown ok
+                readyz check passed
+
+                Успешный результат — HTTP-ответ с ok и проверками готовности, завершившимися успешно.
+                Но сначала ответь на один важный вопрос: explorer-4 — единственный control-plane-узел в твоём кластере или есть другие? Это определяет безопасный порядок перезапуска etcd.
+                
+                    да
+
+                Понял: explorer-4 — единственный control-plane-узел.
+                Тогда действуем осторожно. Сертификаты уже обновлены, но etcd и API server должны перечитать их.
+                Сначала проверь, что etcd работает и его данные доступны. Выполни:
+                sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+                logs e297bf8dc62e6 2>&1 | tail -40
+
+
+                Затем проверь, какие контейнеры работают сейчас:
+                sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+                ps | grep -E 'etcd|kube-apiserver'
+
+
+                Пришли вывод обеих команд. После этого определим, нужно ли перезапускать etcd или достаточно перезапустить только kube-apiserver. Не удаляй данные etcd и не выполняй kubeadm reset.
+                    sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \\
+                    logs e297bf8dc62e6 2>&1 | tail -40
+                    {"level":"warn","ts":"2026-10-12T22:41:11.898591Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:48466","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:12.310095Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:48476","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:12.878559Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:48490","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:17.478942Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:39852","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:19.164823Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:39856","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:19.294145Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:39858","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:41:24.309501Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"192.168.2.82:36066","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:41:24Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:41:24 WARNING: [core] [Channel #3 SubChannel #5] grpc: addrConn.createTransport failed to connect to {Addr: "192.168.2.82:2379", ServerName: "192.168.2.82:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:42:25.673372Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:54918","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:42:25Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:42:25 WARNING: [core] [Channel #4 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:43:44.317693Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"192.168.2.82:51138","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:43:44Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:43:44 WARNING: [core] [Channel #3 SubChannel #5] grpc: addrConn.createTransport failed to connect to {Addr: "192.168.2.82:2379", ServerName: "192.168.2.82:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:44:28.829885Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:57878","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:44:28Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:44:28 WARNING: [core] [Channel #4 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:45:52.195198Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"192.168.2.82:50118","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:45:52Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:45:52 WARNING: [core] [Channel #3 SubChannel #5] grpc: addrConn.createTransport failed to connect to {Addr: "192.168.2.82:2379", ServerName: "192.168.2.82:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:46:25.052578Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37000","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:25.053271Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:36986","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:25.057267Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37012","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:26.060239Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37036","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:26.062244Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37024","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:26.062436Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37038","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:27.363565Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37042","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:27.534557Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37054","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:27.814881Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37064","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:29.912708Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37080","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:30.318756Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37082","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:30.430863Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:37098","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:34.103182Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:45970","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:34.303119Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:45984","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:34.425519Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:45994","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:39.789861Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:45996","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:40.609156Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:45998","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:40.974171Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:46002","server-name":"","error":"remote error: tls: bad certificate"}
+                    {"level":"warn","ts":"2026-10-12T22:46:48.720396Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:43762","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:46:48Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:46:48 WARNING: [core] [Channel #4 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:47:51.799061Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"192.168.2.82:48980","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:47:51Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:47:51 WARNING: [core] [Channel #3 SubChannel #5] grpc: addrConn.createTransport failed to connect to {Addr: "192.168.2.82:2379", ServerName: "192.168.2.82:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    {"level":"warn","ts":"2026-10-12T22:48:31.560506Z","caller":"embed/config_logging.go:170","msg":"rejected connection on client endpoint","remote-addr":"127.0.0.1:38430","server-name":"","error":"tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-12T22:48:31Z is after 2026-10-04T17:08:23Z"}
+                    2026/10/12 22:48:31 WARNING: [core] [Channel #4 SubChannel #6] grpc: addrConn.createTransport failed to connect to {Addr: "127.0.0.1:2379", ServerName: "127.0.0.1:2379", }. Err: connection error: desc = "error reading server preface: remote error: tls: expired certificate"
+                    
+                    sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \\
+                      ps | grep -E 'etcd|kube-apiserver'
+                    06784d1aa27d6       f44c6888a2d24       About a minute ago   Running             **kube-apiserver**            0                   b7adaab40aa48       **kube-apiserver**-explorer-4
+                    e297bf8dc62e6       a9e7e6b294baf       34 minutes ago       Running             **etcd**                      68                  818a522ea7c76       **etcd**-explorer-4
+
+                    Отлично! Kubernetes API server полностью восстановился. 🎉
+                    Главные проверки прошли успешно:
+                    - etcd ok и etcd-readiness ok — API server может работать с etcd.
+                      - informer-sync ok — синхронизация информеров завершена.
+                      - Все проверки poststarthook завершились успешно.
+                      - readyz check passed — API server готов принимать запросы.
+
+                    Важно: сертификаты обновлены до октября 2027 года. Чтобы не столкнуться с этой проблемой снова, запланируй проверку сертификатов за несколько недель до истечения срока:
+                
+                Последний шаг: проверь доступ с Mac
+                Теперь на Mac выполни исходную команду:
+                После sudo kubeadm certs renew all на explorer-4 сертификаты обновились, но локальный ~/.kube/config на Mac может всё ещё содержать старый клиентский сертификат. Давай проверим это.
+
+                scp explorer@192.168.2.82:/etc/kubernetes/admin.conf ~/git/meteo/docs/kubernetes/admin.conf
+                und update all sertificates on mac in ~/.kube/config from admin.conf
+
+                Issue is related to certificate expiration: new pod can't be started because of Контейнер kube-controller-manager запущен 12 октября в 22:21 UTC, а обновлённый сертификат в controller-manager.conf действителен с 12 октября в 22:48 UTC.
+                    Это важная зацепка: контейнер запустился примерно на 26 минут раньше обновления сертификата. 
+                    Поэтому перезапуск действительно может решить проблему.
+                        Logs: sudo crictl \\
+                            --runtime-endpoint unix:///run/containerd/containerd.sock \\
+                              logs --timestamps 06784d1aa27d6 2>&1 |
+                              grep '2026-10-13T08:37'
+                            **2026-10-13T08:37**:00.019081979Z E1013 08:37:00.018860       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:00Z is after 2026-10-04T17:08:25Z, verifying certificate SN=4258685507280856546, SKID=, AKID=D2:47:CC:A1:CE:B5:E9:D5:50:06:00:A2:5E:A2:E2:E6:E9:C3:C5:B7 failed: x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:00Z is after 2026-10-04T17:08:25Z]"
+                            **2026-10-13T08:37**:00.650562097Z E1013 08:37:00.650330       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:00Z is after 2026-10-04T17:08:24Z, verifying certificate SN=3721422170803740900, SKID=, AKID=D2:47:CC:A1:CE:B5:E9:D5:50:06:00:A2:5E:A2:E2:E6:E9:C3:C5:B7 failed: x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:00Z is after 2026-10-04T17:08:24Z]"
+                            **2026-10-13T08:37**:03.424173232Z E1013 08:37:03.423948       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:03Z is after 2026-10-04T17:08:24Z, verifying certificate SN=3721422170803740900, SKID=, AKID=D2:47:CC:A1:CE:B5:E9:D5:50:06:00:A2:5E:A2:E2:E6:E9:C3:C5:B7 failed: x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:03Z is after 2026-10-04T17:08:24Z]"
+                            **2026-10-13T08:37**:03.466311106Z E1013 08:37:03.466106       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:03Z is after 2026-10-04T17:08:25Z, verifying certificate SN=4258685507280856546, SKID=, AKID=D2:47:CC:A1:CE:B5:E9:D5:50:06:00:A2:5E:A2:E2:E6:E9:C3:C5:B7 failed: x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:03Z is after 2026-10-04T17:08:25Z]"
+                            **2026-10-13T08:37**:04.134949534Z E1013 08:37:04.134749       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:04Z is after 2026-10-04T17:08:25Z, verifying certificate SN=4258685507280856546, SKID=, AKID=D2:47:CC:A1:CE:B5:E9:D5:50:06:00:A2:5E:A2:E2:E6:E9:C3:C5:B7 failed: x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:04Z is after 2026-10-04T17:08:25Z]"
+                            **2026-10-13T08:37**:05.749885158Z E1013 08:37:05.749652       1 authentication.go:73] "Unable to authenticate the request" err="[x509: certificate has expired or is not yet valid: current time **2026-10-13T08:37**:05Z is after 2026-10-04T17:08:25Z, verifying certificate SN=4258685507280856546, SKID=, AK
+                    Solution: Restart kube-controller-manager:  
+                        sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+                        stop c90713ea1cf20       
+                        Подожди 30–60 секунд и найди новый контейнер:
+                            sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock \
+                            ps -a | grep kube-controller-manager
+
+                For explorer-4 on which also kubectl commands are used(kubectl get pod -o=custom-columns=NODE:.spec.nodeName,NAME:.metadata.name --all-namespaces -o wide):
+
+                    mkdir -p ~/.kube
+                    sudo cp /etc/kubernetes/admin.conf ~/.kube/config
+                    sudo chown "$(id -u):$(id -g)" ~/.kube/config
+                    chmod 600 ~/.kube/config
+
+                Check Scheduler
+                sudo crictl ps -a --name kube-scheduler
+                    WARN[0000] runtime connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock unix:///var/run/cri-dockerd.sock]. As the default settings are now deprecated, you should set the endpoint instead.
+                    ERRO[0000] validate service connection: validate CRI v1 runtime API for endpoint "unix:///var/run/dockershim.sock": rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial unix /var/run/dockershim.sock: connect: no such file or directory"
+                    WARN[0000] image connect using default endpoints: [unix:///var/run/dockershim.sock unix:///run/containerd/containerd.sock unix:///run/crio/crio.sock unix:///var/run/cri-dockerd.sock]. As the default settings are now deprecated, you should set the endpoint instead.
+                    ERRO[0000] validate service connection: validate CRI v1 image API for endpoint "unix:///var/run/dockershim.sock": rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial unix /var/run/dockershim.sock: connect: no such file or directory"
+                    CONTAINER           IMAGE               CREATED             STATE               NAME                ATTEMPT             POD ID              POD
+                    d19beecd80ddb       9ea0bd82ed4f6       13 hours ago        Running             kube-scheduler      16                  d6944f6f00519       kube-scheduler-explorer-4
+                    2f98b53e39be2       9ea0bd82ed4f6       13 hours ago        Exited              kube-scheduler      15                  c84b122903f7f       kube-scheduler-explorer-4
+
+                sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+                        logs kube-scheduler-explorer-4 -n kube-system --since=30m
+                sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+                    logs kube-scheduler-explorer-4 -n kube-system --since=30m
+                    W1013 10:33:33.306659       1 reflector.go:539] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: failed to list *v1.StatefulSet: Unauthorized
+                    E1013 10:33:33.306736       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.StatefulSet: failed to list *v1.StatefulSet: Unauthorized
+                    W1013 10:33:34.251681       1 reflector.go:539] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: failed to list *v1.Pod: Unauthorized
+                    E1013 10:33:34.251757       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.Pod: failed to list *v1.Pod: Unauthorized
+                    W1013 10:33:34.789037       1 reflector.go:539] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: failed to list *v1.Service: Unauthorized
+                    E1013 10:33:34.789112       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.Service: failed to list *v1.Service: Unauthorized
+
+                sudo crictl \
+                --runtime-endpoint unix:///run/containerd/containerd.sock \
+                stop d19beecd80ddb
+                
+                Kubelet должен автоматически запустить его заново, используя актуальный конфигурационный файл.
+                2. Убедиться, что появился новый контейнер
+                   Подожди несколько секунд и выполни:
+                   sudo crictl \
+                   --runtime-endpoint unix:///run/containerd/containerd.sock \
+                   ps --name kube-scheduler
+
+                3. Проверить, исчез ли Unauthorized
+                   sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+                   logs kube-scheduler-explorer-4 -n kube-system --since=2m
+                
+                
