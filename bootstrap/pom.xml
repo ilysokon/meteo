@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.meteo</groupId>
             <artifactId>adapter</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

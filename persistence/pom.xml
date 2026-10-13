@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.meteo</groupId>
             <artifactId>domain</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <!--<dependency>
             <groupId>com.datastax.jdbc</groupId>
