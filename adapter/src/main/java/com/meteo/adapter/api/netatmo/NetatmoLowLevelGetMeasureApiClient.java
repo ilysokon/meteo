@@ -46,6 +46,8 @@ public class NetatmoLowLevelGetMeasureApiClient {
     Publisher<MeteoResponse> fetchMeasure(String deviceId, String moduleId, String type, Long beginDate, Long endDate) {
         var uri = UriBuilder.of(this.uri)
                 .queryParam("device_id", deviceId)
+                // for deployment test: TODO: remove this line
+                .queryParam("device_id", deviceId)
                 .queryParam("module_id", moduleId)
                 .queryParam("type", type)
                 .queryParam("date_begin", beginDate)
@@ -56,5 +58,6 @@ public class NetatmoLowLevelGetMeasureApiClient {
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + configuration.accessToken());
         return httpClient.retrieve(req, MeteoResponse.class);
+
     }
 }
