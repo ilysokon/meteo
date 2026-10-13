@@ -128,6 +128,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: CASSANDRA_DATA_FILE_DIRECTORIES
+              value: /cassandra_data/data
+            - name: CASSANDRA_COMMITLOG_DIRECTORY
+              value: /cassandra_data/commitlog
+            - name: CASSANDRA_HINTS_DIRECTORY
+              value: /cassandra_data/hints
+            - name: CASSANDRA_SAVED_CACHES_DIRECTORY
+              value: /cassandra_data/saved_caches
 
           readinessProbe:
             tcpSocket:

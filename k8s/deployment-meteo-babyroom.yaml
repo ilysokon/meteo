@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meteo-babyroom
+spec:
+  selector:
+    matchLabels:
+      app: meteo
+  replicas: 1 # tells deployment to run 1 pod matching the template
+  template:
+    metadata:
+      labels:
+        app: meteo
+    spec:
+      containers:
+        - name: meteo
+          imagePullPolicy: Always
+          image: ilysokon/meteo:__IMAGE_TAG__
+          env:
+            - name: NETATMO_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: meteo-secret
+                  key: NETATMO_ACCESS_TOKEN
+            - name: ROOM_NAME
+              value: "BABYROOM"
+          ports:
+            - containerPort: 8080
