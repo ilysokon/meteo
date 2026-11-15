@@ -3,6 +3,7 @@ package com.meteo.persistence;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.meteo.domain.model.Geometeo;
+import com.meteo.domain.model.GeometeoToken;
 
 import java.time.Instant;
 import java.util.Map;
@@ -14,10 +15,12 @@ public class GeometeoCqlRepository {
     private final PreparedStatement insertGeometeoPS;
     private final CqlSession session;
     private final String keyspace;
+    private final String accessToken;
 
-    public GeometeoCqlRepository(final CqlSession session, final String keyspace) {
+    public GeometeoCqlRepository(final CqlSession session, final String keyspace, final String accessToken) {
         this.session = session;
         this.keyspace = keyspace;
+        this.accessToken = accessToken;
 
         insertGeometeoPS =
                 session.prepare(
@@ -43,5 +46,10 @@ public class GeometeoCqlRepository {
         session.execute(bs);
 
         return timeUUID;
+    }
+
+    public GeometeoToken getGeometeoToken() {
+        // TODO: should be taken from the database
+        return new GeometeoToken(accessToken);
     }
 }
