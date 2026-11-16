@@ -25,5 +25,6 @@ public class NetatmoConfigurationService {
 
     public synchronized void updateConfiguration() {
         updatedConfiguration = new NetatmoConfiguration(persistenceService.getGeometeoToken().accessToken(), netatmoConfiguration.measureScaleMinutes());
+        LOG.info("Netatmo Configuration is updated by new access token.")
     }
 }
