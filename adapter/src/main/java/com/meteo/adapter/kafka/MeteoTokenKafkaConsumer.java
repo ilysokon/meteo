@@ -35,9 +35,9 @@ public class MeteoTokenKafkaConsumer implements MeteoKafkaConsumer {
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 25);
 
-        consumerProps.put("security.protocol", "SASL_SSL");
-        consumerProps.put("sasl.mechanism", "PLAIN");
-        consumerProps.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='supersecret';");
+        consumerProps.put("security.protocol", "SASL_PLAINTEXT");
+        consumerProps.put("sasl.mechanism", "SCRAM-SHA-512");
+        consumerProps.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username='admin' password='supersecret';");
 
         consumer = new KafkaConsumer<>(consumerProps);
         consumer.subscribe(kafkaConfiguration.meteoSourceTopicNames());
