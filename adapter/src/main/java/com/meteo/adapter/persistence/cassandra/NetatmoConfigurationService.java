@@ -4,8 +4,13 @@ import com.meteo.adapter.api.netatmo.NetatmoConfiguration;
 import com.meteo.application.ports.out.persistence.PersistenceService;
 import jakarta.inject.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Singleton
 public class NetatmoConfigurationService {
+    private static final Logger LOG = LoggerFactory.getLogger(NetatmoConfigurationService.class);
+
     private final NetatmoConfiguration netatmoConfiguration;
     private final PersistenceService persistenceService;
     private NetatmoConfiguration updatedConfiguration;
@@ -25,6 +30,6 @@ public class NetatmoConfigurationService {
 
     public synchronized void updateConfiguration() {
         updatedConfiguration = new NetatmoConfiguration(persistenceService.getGeometeoToken().accessToken(), netatmoConfiguration.measureScaleMinutes());
-        LOG.info("Netatmo Configuration is updated by new access token.")
+        LOG.info("Netatmo Configuration is updated by new access token.");
     }
 }
