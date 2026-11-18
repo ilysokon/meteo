@@ -7,8 +7,8 @@ public record NetatmoToken(Instant refreshedAt, String accessToken, String refre
     @Override
     public String toString() {
         return "NetatmoToken{" +
-                "refreshedAt=" + refreshedAt +
-                "accessToken='" + accessToken + '\'' +
+                "refreshedAt='" + refreshedAt + '\'' +
+                ", accessToken='" + accessToken + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
                 ", expiresAt=" + expiresIn + '\'' +
                 '}';

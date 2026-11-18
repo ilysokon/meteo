@@ -84,6 +84,6 @@ public class GeometeoCqlRepository {
 
         Collections.sort(netatmoTokens);
 
-        return netatmoTokens.getFirst();
+        return netatmoTokens.getLast();
     }
 }
