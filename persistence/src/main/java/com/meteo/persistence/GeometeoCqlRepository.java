@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.meteo.domain.model.Geometeo;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +67,7 @@ public class GeometeoCqlRepository {
 
     public NetatmoToken findLatestNetatmoToken() {
         var bs = selectNetatmoTokenPS.boundStatementBuilder()
-                .setInstant("date", Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS))
+                .setLocalDate("date", LocalDateTime.now().minusDays(1).toLocalDate())
                 .build();
 
         final var resultSet = session.execute(bs);
