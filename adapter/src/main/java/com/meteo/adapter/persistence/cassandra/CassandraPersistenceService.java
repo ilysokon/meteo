@@ -38,7 +38,7 @@ public class CassandraPersistenceService implements PersistenceService {
     @Override
     public GeometeoToken getGeometeoToken() {
         final var netatmoToken = geometeoCqlRepository.findLatestNetatmoToken();
-        LOG.info("NetatmoToken: " + netatmoToken);
+        LOG.info("Latest NetatmoToken: " + netatmoToken);
 
         return new GeometeoToken(netatmoToken.refreshedAt(), netatmoToken.accessToken(), netatmoToken.refreshToken(), netatmoToken.expiresIn());
     }

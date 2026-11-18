@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.meteo.adapter.api.netatmo.NetatmoMeteoService;
+import com.meteo.adapter.persistence.cassandra.NetatmoConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,12 +15,15 @@ import jakarta.inject.Singleton;
 @Singleton
 public class GeometeoJob {
 	private final NetatmoMeteoService netatmoMeteoService;
+    private final NetatmoConfigurationService netatmoConfigurationService;
 	private static final Logger LOG = LoggerFactory.getLogger(GeometeoJob.class);
 
 	@Inject()
-	public GeometeoJob(final NetatmoMeteoService netatmoMeteoService) {
+	public GeometeoJob(final NetatmoMeteoService netatmoMeteoService, final NetatmoConfigurationService netatmoConfigurationService) {
 		this.netatmoMeteoService = netatmoMeteoService;
-		LOG.info("GeometeoJob created");
+        this.netatmoConfigurationService = netatmoConfigurationService;
+
+        LOG.info("GeometeoJob created");
 	}
 
 	@Scheduled(fixedDelay = "${scheduler.geometeo.measure.delay}")
@@ -51,4 +55,14 @@ public class GeometeoJob {
             }
         }
 	}
+
+    /**
+     * Only for testing purpose.
+     */
+    @Scheduled(fixedDelay = "${scheduler.geometeo.token.delay}")
+    void updateGeometeoTokenIfNecessary() {
+        netatmoConfigurationService.updateConfiguration();
+
+        LOG.info("updateGeometeoTokenIfNecessary() Job is triggered every 30 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+    }
 }
