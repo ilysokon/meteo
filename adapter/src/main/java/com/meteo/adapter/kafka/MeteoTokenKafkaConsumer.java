@@ -48,6 +48,12 @@ public class MeteoTokenKafkaConsumer implements MeteoKafkaConsumer {
         LOG.info("Meteo Token Kafka consumer is started");
         while (true) {
             ConsumerRecords<String, Bytes> records = consumer.poll(Duration.ofMillis(100));
+            LOG.info("records: {}", records);
+            if (records.isEmpty()) {
+                LOG.info("The records is empty");
+            } else {
+                LOG.info("The records is not empty, processing ...");
+            }
             for (ConsumerRecord<String, Bytes> record : records) {
                 // Process the received message
                 Bytes payload = record.value();
