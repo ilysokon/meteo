@@ -57,7 +57,10 @@ public class MeteoTokenKafkaConsumer implements MeteoKafkaConsumer {
                 final byte instruction = deserialize(byteBuffer);
                 switch (instruction) {
                     // Token is updated
-                    case 0 -> netatmoConfigurationService.updateConfiguration();
+                    case 0 -> {
+                        LOG.info("Token is updated, updating configuration ...");
+                        netatmoConfigurationService.updateConfiguration();
+                    }
                 }
             }
         }
