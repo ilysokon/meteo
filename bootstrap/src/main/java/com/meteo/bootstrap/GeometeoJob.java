@@ -59,10 +59,10 @@ public class GeometeoJob {
     /**
      * Only for testing purpose.
      */
-    @Scheduled(fixedDelay = "${scheduler.geometeo.token.delay}")
-    void updateGeometeoTokenIfNecessary() {
-        netatmoConfigurationService.updateConfiguration();
-
-        LOG.info("updateGeometeoTokenIfNecessary() Job is triggered every 30 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
-    }
+//    @Scheduled(fixedDelay = "${scheduler.geometeo.token.delay}")
+//    void updateGeometeoTokenIfNecessary() {
+//        netatmoConfigurationService.updateConfiguration();
+//
+//        LOG.info("updateGeometeoTokenIfNecessary() Job is triggered every 30 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
+//    }
 }
