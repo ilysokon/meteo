@@ -12,7 +12,6 @@ import com.meteo.application.ports.out.persistence.PersistenceService;
 
 import jakarta.inject.Singleton;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Singleton
@@ -38,6 +37,8 @@ public class CassandraPersistenceService implements PersistenceService {
 
     @Override
     public GeometeoToken getGeometeoToken() {
-        return geometeoCqlRepository.getGeometeoToken();
+        final var netatmoToken = geometeoCqlRepository.getNearestNetatmoToken();
+        LOG.info("GeometeoToken: " + netatmoToken);
+        return new GeometeoToken(netatmoToken.accessToken());
     }
 }
