@@ -22,7 +22,7 @@ public class GeometeoJob {
 		LOG.info("GeometeoJob created");
 	}
 
-	@Scheduled(fixedDelay = "${scheduler.delay}")
+	@Scheduled(fixedDelay = "${scheduler.geometeo.measure.delay}")
 	void fetchMeasure() {
 		LOG.info("Simple Job is triggered every 1 minutes: {}", new SimpleDateFormat("dd/M/yyyy hh:mm:ss").format(new Date()));
         String room = System.getenv("ROOM_NAME");

@@ -5,19 +5,12 @@ import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.meteo.domain.model.Geometeo;
-import com.meteo.domain.model.GeometeoToken;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.Collectors;
 
 // @Singleton
 public class GeometeoCqlRepository {
@@ -71,7 +64,7 @@ public class GeometeoCqlRepository {
         return timeUUID;
     }
 
-    public NetatmoToken getNearestNetatmoToken() {
+    public NetatmoToken findLatestNetatmoToken() {
         var bs = selectNetatmoTokenPS.boundStatementBuilder()
                 .setInstant("date", Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS))
                 .build();
