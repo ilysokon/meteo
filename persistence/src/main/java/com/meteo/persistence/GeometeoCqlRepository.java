@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.core.data.UdtValue;
 import com.meteo.domain.model.Geometeo;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,18 +76,14 @@ public class GeometeoCqlRepository {
         final List<Row> rows = resultSet.all();
         final List<NetatmoToken> netatmoTokens = new ArrayList<>();
         for (var row : rows) {
-            final UdtValue netatmoTokenDataUdtValue = row.get(0, UdtValue.class);
-            final var netatmoToken = new NetatmoToken(
-                    netatmoTokenDataUdtValue.getInstant("refreshed_at"),
-                    netatmoTokenDataUdtValue.getString("access_token"),
-                    netatmoTokenDataUdtValue.getString("refresh_token"),
-                    netatmoTokenDataUdtValue.getInt("expires_in")
-            );
-            netatmoTokens.add(netatmoToken);
+            netatmoTokens.add(new NetatmoToken(row.getInstant("refreshed_at"),
+                                               row.getString("access_token"),
+                                               row.getString("refresh_token"),
+                                               row.getInt("expires_in")));
         }
 
         Collections.sort(netatmoTokens);
 
-        return netatmoTokens.get(0);
+        return netatmoTokens.getFirst();
     }
 }
