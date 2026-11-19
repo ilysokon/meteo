@@ -31,7 +31,7 @@ public class MeteoTokenKafkaConsumer implements MeteoKafkaConsumer {
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfiguration.bootstrapServers());
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfiguration.groupId());
+        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, System.getenv("ROOM_NAME"));
         consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerProps.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 25);
 
