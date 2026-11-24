@@ -32,3 +32,9 @@ docker.io/library/cassandra:4.1.10 docker.io/library/cassandra:4.1.10 ilysokon/m
     kubectl get secret netatmo-secret -n meteo \
         -o jsonpath='{.data.NETATMO_ACCESS_TOKEN}' \
         | base64 -d | sha256sum
+
+# Get logs from a specific container
+    kubectl logs -n meteo \
+    meteo-babyroom-5ff48f8455-d4gb8 \
+    -c meteo \
+    --timestamps
