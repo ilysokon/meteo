@@ -27,3 +27,8 @@ kubectl rollout history deployment/meteo -n meteo
 # List Container images filtering by Pod namespace
 kubectl get pods --namespace meteo -o jsonpath="{.items[*].spec.containers[*].image}"
 docker.io/library/cassandra:4.1.10 docker.io/library/cassandra:4.1.10 ilysokon/meteo:c55c5e23fb98551e34101f90f0847a0bdebc943c ilysokon/meteo:c55c5e23fb98551e34101f90f0847a0bdebc943c ilysokon/netatmo:dff368f0ea28092769cca4410a7522ad19c820ba ilysokon/netatmo:dff368f0ea28092769cca4410a7522ad19c820ba ilysokon/netatmo-token-refresher:2c94a7bf0baee6267f1dc5a3229f114879ef3f21
+
+# Read secret value: NETATMO_ACCESS_TOKEN
+    kubectl get secret netatmo-secret -n meteo \
+        -o jsonpath='{.data.NETATMO_ACCESS_TOKEN}' \
+        | base64 -d | sha256sum
