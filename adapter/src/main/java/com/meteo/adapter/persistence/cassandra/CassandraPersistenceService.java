@@ -1,6 +1,8 @@
 package com.meteo.adapter.persistence.cassandra;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.meteo.adapter.api.netatmo.NetatmoConfiguration;
+import com.meteo.domain.model.GeometeoToken;
 import com.meteo.persistence.GeometeoCqlRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,6 @@ import com.meteo.application.ports.out.persistence.PersistenceService;
 
 import jakarta.inject.Singleton;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Singleton
@@ -19,10 +20,10 @@ public class CassandraPersistenceService implements PersistenceService {
 
     private GeometeoCqlRepository  geometeoCqlRepository;
 
-	public CassandraPersistenceService(final CassandraConfiguration cassandraConfiguration) {
+	public CassandraPersistenceService(final CassandraConfiguration cassandraConfiguration, final NetatmoConfiguration netatmoConfiguration) {
         final var cassandraConnector = new CassandraConnector();
         cassandraConnector.connect(cassandraConfiguration.contactPoints(), cassandraConfiguration.dataCenter());
-        geometeoCqlRepository = new GeometeoCqlRepository(cassandraConnector.getSession(), cassandraConfiguration.keyspace());
+        geometeoCqlRepository = new GeometeoCqlRepository(cassandraConnector.getSession(), cassandraConfiguration.keyspace(), netatmoConfiguration.accessToken());
         System.out.println("Successfully connected to cassandra: " + cassandraConnector.getSession().toString());
 		LOG.info("CassandraPersistenceService is created");
 	}
@@ -33,4 +34,12 @@ public class CassandraPersistenceService implements PersistenceService {
         geometeoCqlRepository.insertGeometeo(geometeo,  uuid);
 		LOG.info("Geometeo: " + geometeo + " is persisted in Cassandra");
 	}
+
+    @Override
+    public GeometeoToken getGeometeoToken() {
+        final var netatmoToken = geometeoCqlRepository.findLatestNetatmoToken();
+        LOG.info("Latest NetatmoToken: " + netatmoToken);
+
+        return new GeometeoToken(netatmoToken.refreshedAt(), netatmoToken.accessToken(), netatmoToken.refreshToken(), netatmoToken.expiresIn());
+    }
 }
